@@ -740,6 +740,21 @@
 
     <script>
         const connection = new BareMux.BareMuxConnection('/baremux/worker.js');
+        let transportPromise = null;
+
+        async function ensureTransport(wispUrl) {
+            if ((await connection.getTransport()) === '/libcurl/index.mjs') return;
+
+            if (!transportPromise) {
+                transportPromise = connection.setTransport('/libcurl/index.mjs', [
+                    { websocket: wispUrl }
+                ]).catch((error) => {
+                    transportPromise = null;
+                    throw error;
+                });
+            }
+            await transportPromise;
+        }
 
         async function prepareProxy() {
             await registerSW();
@@ -747,9 +762,7 @@
             const wispProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wispUrl = `${wispProtocol}//${location.host}/wisp/`;
 
-            if ((await connection.getTransport()) !== '/libcurl/index.mjs') {
-                await connection.setTransport('/libcurl/index.mjs', [{ websocket: wispUrl }]);
-            }
+            await ensureTransport(wispUrl);
         }
 
         async function openProxy(url, skipAutoCloak = false) {
@@ -1030,7 +1043,15 @@
                 panicUrlSetting.value = localStorage.getItem('aridiumPanicUrl') || 'https://www.google.com';
             }
         });
-        document.getElementById('clearDataButton').addEventListener('click', () => {
+        document.getElementById('clearDataButton').addEventListener('click', async () => {
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                await Promise.all(registrations.map(registration => registration.unregister()));
+            }
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+            }
             localStorage.clear();
             sessionStorage.clear();
             location.reload();

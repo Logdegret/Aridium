@@ -9,6 +9,23 @@ import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 
 const app = express();
+const proxyAssetPrefixes = ["/uv/", "/libcurl/", "/baremux/"];
+
+// Match Truffled's Wisp networking profile for media/CDN connections.
+wisp.options.dns_method = "resolve";
+wisp.options.dns_servers = ["1.1.1.1", "1.0.0.1", "8.8.8.8", "8.8.4.4"];
+wisp.options.dns_result_order = "ipv4first";
+wisp.options.allow_udp = true;
+wisp.options.timeout = 30000;
+
+app.use((req, res, next) => {
+	if (proxyAssetPrefixes.some((prefix) => req.path.startsWith(prefix))) {
+		res.setHeader("Access-Control-Allow-Origin", "*");
+		res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+	}
+	next();
+});
+
 // Load our publicPath first and prioritize it over UV.
 app.use(express.static("./public"));
 // Load vendor files last.
