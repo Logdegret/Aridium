@@ -16,6 +16,7 @@ app.use(express.static("./public"));
 app.use("/uv/", express.static(uvPath));
 app.use("/libcurl/", express.static(libcurlPath));
 app.use("/baremux/", express.static(baremuxPath));
+app.use("/eruda/", express.static(resolve("node_modules/eruda")));
 
 // Error for everything else
 app.use((req, res) => {

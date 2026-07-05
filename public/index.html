@@ -675,7 +675,7 @@
                 <div class="setting-row">
                     <div>
                         <div class="setting-label">Auto cloak</div>
-                        <div class="setting-help">Open searches in an About:Blank tab automatically.</div>
+                        <div class="setting-help">Open searches in About:Blank, then send the original tab to NASA.</div>
                     </div>
                     <label class="setting-toggle">
                         <input type="checkbox" id="autoCloakSetting">
@@ -693,6 +693,18 @@
                         <span class="toggle-track" aria-hidden="true"></span>
                         <span>Enabled</span>
                     </label>
+                </div>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Panic key</div>
+                        <div class="setting-help">Choose the shortcut that immediately opens your panic destination.</div>
+                    </div>
+                    <select class="setting-select" id="panicKeySetting" aria-label="Panic key">
+                        <option value="Escape">Escape</option>
+                        <option value="Backquote">Backquote (`)</option>
+                        <option value="F4">F4</option>
+                        <option value="CtrlShiftX">Ctrl + Shift + X</option>
+                    </select>
                 </div>
                 <div class="setting-row">
                     <div>
@@ -751,7 +763,10 @@
 
             if (!skipAutoCloak && window.self === window.top &&
                 localStorage.getItem('aridiumAutoCloak') === 'true') {
-                if (launchCloak(url)) return;
+                if (launchCloak(url)) {
+                    setTimeout(() => window.location.replace('https://www.nasa.gov/'), 150);
+                    return;
+                }
             }
 
             const searchHints = document.getElementById('searchHints');
@@ -914,9 +929,16 @@
 
         // Panic key
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
+            const panicKey = localStorage.getItem('aridiumPanicKey') || 'Escape';
+            const panicPressed = panicKey === 'CtrlShiftX'
+                ? e.ctrlKey && e.shiftKey && e.code === 'KeyX'
+                : e.code === panicKey || e.key === panicKey;
+
+            if (panicPressed) {
+                e.preventDefault();
                 const panicUrl = localStorage.getItem('aridiumPanicUrl') || 'https://www.google.com';
                 window.location.replace(panicUrl);
+                return;
             }
             if (e.ctrlKey && e.key === 'l') {
                 e.preventDefault();
@@ -939,9 +961,11 @@
 
         const autoCloakSetting = document.getElementById('autoCloakSetting');
         const loaderSetting = document.getElementById('loaderSetting');
+        const panicKeySetting = document.getElementById('panicKeySetting');
         const panicUrlSetting = document.getElementById('panicUrlSetting');
         autoCloakSetting.checked = localStorage.getItem('aridiumAutoCloak') === 'true';
         loaderSetting.checked = localStorage.getItem('aridiumShowLoader') !== 'false';
+        panicKeySetting.value = localStorage.getItem('aridiumPanicKey') || 'Escape';
         panicUrlSetting.value = localStorage.getItem('aridiumPanicUrl') || panicUrlSetting.value;
 
         autoCloakSetting.addEventListener('change', () => {
@@ -949,6 +973,9 @@
         });
         loaderSetting.addEventListener('change', () => {
             localStorage.setItem('aridiumShowLoader', String(loaderSetting.checked));
+        });
+        panicKeySetting.addEventListener('change', () => {
+            localStorage.setItem('aridiumPanicKey', panicKeySetting.value);
         });
         panicUrlSetting.addEventListener('change', () => {
             try {
