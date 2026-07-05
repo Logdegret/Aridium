@@ -699,12 +699,9 @@
                         <div class="setting-label">Panic key</div>
                         <div class="setting-help">Choose the shortcut that immediately opens your panic destination.</div>
                     </div>
-                    <select class="setting-select" id="panicKeySetting" aria-label="Panic key">
-                        <option value="Escape">Escape</option>
-                        <option value="Backquote">Backquote (`)</option>
-                        <option value="F4">F4</option>
-                        <option value="CtrlShiftX">Ctrl + Shift + X</option>
-                    </select>
+                    <div class="setting-control">
+                        <input class="setting-input" id="panicKeySetting" type="text" value="Escape" readonly aria-label="Custom panic key" title="Click, then press any key combination">
+                    </div>
                 </div>
                 <div class="setting-row">
                     <div>
@@ -761,12 +758,10 @@
                 return;
             }
 
+            let cloakSession = null;
             if (!skipAutoCloak && window.self === window.top &&
                 localStorage.getItem('aridiumAutoCloak') === 'true') {
-                if (launchCloak(url)) {
-                    setTimeout(() => window.location.replace('https://www.nasa.gov/'), 150);
-                    return;
-                }
+                cloakSession = createCloakShell();
             }
 
             const searchHints = document.getElementById('searchHints');
@@ -775,12 +770,24 @@
             try {
                 await prepareProxy();
 
+                const proxiedUrl = new URL(
+                    __uv$config.prefix + __uv$config.encodeUrl(url),
+                    location.href
+                ).href;
+                if (cloakSession) {
+                    cloakSession.frame.src = proxiedUrl;
+                    cloakSession.window.document.title = 'New Tab';
+                    cloakSession.window.opener = null;
+                    setTimeout(() => window.location.replace('https://www.nasa.gov/'), 250);
+                    return;
+                }
+
                 document.getElementById('browserOverlay').classList.add('active');
-                document.getElementById('proxyFrame').src =
-                    __uv$config.prefix + __uv$config.encodeUrl(url);
+                document.getElementById('proxyFrame').src = proxiedUrl;
                 document.getElementById('browserUrl').value = url;
                 searchHints.textContent = '💡 Enter a URL or search anything!';
             } catch (error) {
+                if (cloakSession) cloakSession.window.close();
                 console.error('Proxy initialization failed:', error);
                 searchHints.textContent = 'Could not connect to the proxy. Please try again.';
             }
@@ -844,13 +851,13 @@
             }
         }
 
-        function launchCloak(targetUrl = '') {
+        function createCloakShell() {
             const status = document.getElementById('cloakStatus');
-            const cloakWindow = window.open('', '_blank');
+            const cloakWindow = window.open('about:blank', '_blank');
 
             if (!cloakWindow) {
                 if (status) status.textContent = 'Pop-up blocked. Allow pop-ups for this site and try again.';
-                return false;
+                return null;
             }
 
             try {
@@ -867,23 +874,31 @@
                 cloakDocument.head.appendChild(style);
 
                 const frame = cloakDocument.createElement('iframe');
-                const appUrl = new URL(location.href);
-                appUrl.searchParams.delete('cloakTarget');
-                if (targetUrl) appUrl.searchParams.set('cloakTarget', targetUrl);
-                frame.src = appUrl.href;
                 frame.title = 'Aridium';
-                frame.allow = 'fullscreen';
+                frame.allow = 'autoplay; fullscreen; picture-in-picture; presentation';
                 cloakDocument.body.appendChild(frame);
 
-                cloakWindow.opener = null;
-                if (status) status.textContent = 'Cloak opened in a new tab.';
-                return true;
+                return { window: cloakWindow, frame };
             } catch (error) {
                 cloakWindow.close();
                 console.error('Cloak launch failed:', error);
                 if (status) status.textContent = 'The cloak could not be opened in this browser.';
-                return false;
+                return null;
             }
+        }
+
+        function launchCloak() {
+            const cloakSession = createCloakShell();
+            if (!cloakSession) return false;
+
+            const appUrl = new URL(location.href);
+            appUrl.search = '';
+            appUrl.hash = '';
+            cloakSession.frame.src = appUrl.href;
+            cloakSession.window.opener = null;
+            const status = document.getElementById('cloakStatus');
+            if (status) status.textContent = 'Cloak opened in a new tab.';
+            return true;
         }
 
         function showPage(name) {
@@ -928,11 +943,29 @@
         });
 
         // Panic key
+        function shortcutFromEvent(event) {
+            if (['ControlLeft', 'ControlRight', 'ShiftLeft', 'ShiftRight', 'AltLeft', 'AltRight', 'MetaLeft', 'MetaRight'].includes(event.code)) return '';
+            const parts = [];
+            if (event.ctrlKey) parts.push('Ctrl');
+            if (event.altKey) parts.push('Alt');
+            if (event.shiftKey) parts.push('Shift');
+            if (event.metaKey) parts.push('Meta');
+            parts.push(event.code || event.key);
+            return parts.join('+');
+        }
+
+        function shortcutLabel(shortcut) {
+            return shortcut.split('+').map(part => {
+                if (part.startsWith('Key')) return part.slice(3);
+                if (part.startsWith('Digit')) return part.slice(5);
+                if (part === 'Backquote') return '`';
+                return part;
+            }).join(' + ');
+        }
+
         document.addEventListener('keydown', function(e) {
             const panicKey = localStorage.getItem('aridiumPanicKey') || 'Escape';
-            const panicPressed = panicKey === 'CtrlShiftX'
-                ? e.ctrlKey && e.shiftKey && e.code === 'KeyX'
-                : e.code === panicKey || e.key === panicKey;
+            const panicPressed = shortcutFromEvent(e) === panicKey;
 
             if (panicPressed) {
                 e.preventDefault();
@@ -965,7 +998,12 @@
         const panicUrlSetting = document.getElementById('panicUrlSetting');
         autoCloakSetting.checked = localStorage.getItem('aridiumAutoCloak') === 'true';
         loaderSetting.checked = localStorage.getItem('aridiumShowLoader') !== 'false';
-        panicKeySetting.value = localStorage.getItem('aridiumPanicKey') || 'Escape';
+        let savedPanicKey = localStorage.getItem('aridiumPanicKey') || 'Escape';
+        if (savedPanicKey === 'CtrlShiftX') {
+            savedPanicKey = 'Ctrl+Shift+KeyX';
+            localStorage.setItem('aridiumPanicKey', savedPanicKey);
+        }
+        panicKeySetting.value = shortcutLabel(savedPanicKey);
         panicUrlSetting.value = localStorage.getItem('aridiumPanicUrl') || panicUrlSetting.value;
 
         autoCloakSetting.addEventListener('change', () => {
@@ -974,8 +1012,14 @@
         loaderSetting.addEventListener('change', () => {
             localStorage.setItem('aridiumShowLoader', String(loaderSetting.checked));
         });
-        panicKeySetting.addEventListener('change', () => {
-            localStorage.setItem('aridiumPanicKey', panicKeySetting.value);
+        panicKeySetting.addEventListener('keydown', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const shortcut = shortcutFromEvent(event);
+            if (!shortcut) return;
+            localStorage.setItem('aridiumPanicKey', shortcut);
+            panicKeySetting.value = shortcutLabel(shortcut);
+            panicKeySetting.blur();
         });
         panicUrlSetting.addEventListener('change', () => {
             try {
@@ -991,12 +1035,6 @@
             sessionStorage.clear();
             location.reload();
         });
-
-        const cloakedTarget = new URLSearchParams(location.search).get('cloakTarget');
-        if (cloakedTarget && window.self !== window.top) {
-            history.replaceState(null, '', location.pathname);
-            setTimeout(() => openProxy(cloakedTarget, true), 0);
-        }
 
     </script>
 </body>
