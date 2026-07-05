@@ -51,10 +51,14 @@ app.use((req, res) => {
 const server = createServer();
 
 server.on("request", (req, res) => {
-	// The Scramjet bridge must stay outside cross-origin isolation so proxied
-	// media/CDN responses render; everything else is isolated (matches Truffled).
-	const isScramBridge = req.url.split("?")[0] === "/scram/bridge.html";
-	if (!isScramBridge) {
+	// The Scramjet bridge and the page that embeds it must stay outside
+	// cross-origin isolation, otherwise the isolated host page can't embed the
+	// same-origin bridge iframe (and proxied media/CDN responses won't render).
+	// Everything else is isolated (matches Truffled's search.html/bridge.html).
+	const path = req.url.split("?")[0];
+	const isScramBridge = path === "/scram/bridge.html";
+	const isProxyHost = path === "/" || path === "/index.html";
+	if (!isScramBridge && !isProxyHost) {
 		res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
 		res.setHeader("Cross-Origin-Embedder-Policy", "credentialless");
 	}
