@@ -6,6 +6,8 @@
     <title>Nebula - Web Browser</title>
     <script src="/uv/uv.bundle.js"></script>
     <script src="/uv/uv.config.js"></script>
+    <script src="/baremux/index.js"></script>
+    <script src="/register-sw.js"></script>
     <style>
         :root {
             --bg-primary: #0a0a0a;
@@ -254,20 +256,40 @@
     </div>
 
     <script>
-        // Wait for UV to load
-        function openProxy(url) {
+        const connection = new BareMux.BareMuxConnection('/baremux/worker.js');
+
+        async function prepareProxy() {
+            await registerSW();
+
+            const wispProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wispUrl = `${wispProtocol}//${location.host}/wisp/`;
+
+            if ((await connection.getTransport()) !== '/epoxy/index.mjs') {
+                await connection.setTransport('/epoxy/index.mjs', [{ wisp: wispUrl }]);
+            }
+        }
+
+        async function openProxy(url) {
             if (typeof __uv$config === 'undefined') {
                 alert('Ultraviolet not loaded. Please check your deployment.');
                 return;
             }
-            
-            document.getElementById('browserOverlay').classList.add('active');
-            
-            // Use Ultraviolet's encode function
-            const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
-            
-            document.getElementById('proxyFrame').src = encodedUrl;
-            document.getElementById('browserUrl').value = url;
+
+            const searchHints = document.getElementById('searchHints');
+            searchHints.textContent = 'Connecting securely…';
+
+            try {
+                await prepareProxy();
+
+                document.getElementById('browserOverlay').classList.add('active');
+                document.getElementById('proxyFrame').src =
+                    __uv$config.prefix + __uv$config.encodeUrl(url);
+                document.getElementById('browserUrl').value = url;
+                searchHints.textContent = '💡 Enter a URL or search anything!';
+            } catch (error) {
+                console.error('Proxy initialization failed:', error);
+                searchHints.textContent = 'Could not connect to the proxy. Please try again.';
+            }
         }
 
         function closeBrowser() {
