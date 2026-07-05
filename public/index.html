@@ -126,6 +126,43 @@
             gap: 15px; margin-bottom: 40px;
         }
 
+        .page-header { margin-bottom: 24px; }
+        .page-title { font-size: 32px; margin-bottom: 8px; }
+        .page-description { color: var(--text-secondary); }
+
+        .settings-card {
+            max-width: 700px; background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 24px;
+        }
+
+        .setting-row {
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 20px;
+        }
+
+        .setting-row + .setting-row {
+            border-top: 1px solid var(--border); margin-top: 22px; padding-top: 22px;
+        }
+
+        .setting-label { font-weight: 600; margin-bottom: 4px; }
+        .setting-help { color: var(--text-secondary); font-size: 14px; }
+
+        .setting-select {
+            min-width: 170px; color: var(--text-primary); background: var(--bg-secondary);
+            border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+            font: inherit; outline: none;
+        }
+
+        .setting-button {
+            min-height: 46px; padding: 10px 18px; border: none; border-radius: 10px;
+            color: white; background: var(--accent); font: inherit; font-weight: 600;
+            cursor: pointer; white-space: nowrap; transition: background 0.2s ease;
+            touch-action: manipulation;
+        }
+
+        .setting-button:hover { background: var(--accent-hover); }
+        .setting-status { min-height: 20px; margin-top: 10px; color: var(--text-secondary); font-size: 14px; }
+
         .link-card {
             background: var(--bg-card); border: 1px solid var(--border);
             border-radius: 16px; padding: 25px 20px; text-align: center;
@@ -182,6 +219,8 @@
         @media (max-width: 480px) {
             .quick-links { grid-template-columns: repeat(2, 1fr); }
             .hero-title { font-size: 28px; }
+            .setting-row { align-items: stretch; flex-direction: column; }
+            .setting-select, .setting-button { width: 100%; min-width: 0; }
         }
     </style>
 </head>
@@ -243,6 +282,76 @@
             </div>
         </div>
 
+        <div class="page" id="gamesPage">
+            <div class="page-header">
+                <h1 class="page-title"><span class="gradient-text">Games</span></h1>
+                <p class="page-description">Choose a game site to open it through Nebula.</p>
+            </div>
+            <div class="quick-links">
+                <div class="link-card" onclick="openProxy('https://poki.com')">
+                    <span class="link-emoji">🕹️</span><span>Poki</span>
+                </div>
+                <div class="link-card" onclick="openProxy('https://www.crazygames.com')">
+                    <span class="link-emoji">🎮</span><span>CrazyGames</span>
+                </div>
+                <div class="link-card" onclick="openProxy('https://itch.io/games/html5')">
+                    <span class="link-emoji">👾</span><span>itch.io</span>
+                </div>
+                <div class="link-card" onclick="openProxy('https://www.newgrounds.com/games')">
+                    <span class="link-emoji">🏆</span><span>Newgrounds</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="appsPage">
+            <div class="page-header">
+                <h1 class="page-title"><span class="gradient-text">Apps</span></h1>
+                <p class="page-description">Launch popular web apps through the proxy.</p>
+            </div>
+            <div class="quick-links">
+                <div class="link-card" onclick="openProxy('https://discord.com/app')">
+                    <span class="link-emoji">💬</span><span>Discord</span>
+                </div>
+                <div class="link-card" onclick="openProxy('https://open.spotify.com')">
+                    <span class="link-emoji">🎧</span><span>Spotify</span>
+                </div>
+                <div class="link-card" onclick="openProxy('https://www.reddit.com')">
+                    <span class="link-emoji">🤖</span><span>Reddit</span>
+                </div>
+                <div class="link-card" onclick="openProxy('https://github.com')">
+                    <span class="link-emoji">💻</span><span>GitHub</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="settingsPage">
+            <div class="page-header">
+                <h1 class="page-title"><span class="gradient-text">Settings</span></h1>
+                <p class="page-description">Customize how Nebula searches the web.</p>
+            </div>
+            <div class="settings-card">
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Search engine</div>
+                        <div class="setting-help">Used when the address bar contains a search query.</div>
+                    </div>
+                    <select class="setting-select" id="searchEngine" aria-label="Search engine">
+                        <option value="https://www.google.com/search?q=">Google</option>
+                        <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
+                        <option value="https://www.bing.com/search?q=">Bing</option>
+                    </select>
+                </div>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">About:Blank cloak</div>
+                        <div class="setting-help">Open Nebula inside a blank tab to hide its URL and title.</div>
+                        <div class="setting-status" id="cloakStatus" aria-live="polite"></div>
+                    </div>
+                    <button class="setting-button" id="cloakButton" type="button">Launch cloak</button>
+                </div>
+            </div>
+        </div>
+
         <div class="browser-overlay" id="browserOverlay">
             <div class="browser-toolbar">
                 <button class="toolbar-btn" onclick="browserBack()">←</button>
@@ -251,7 +360,7 @@
                 <input type="text" id="browserUrl" class="browser-url-bar" readonly onclick="this.select()">
                 <button class="toolbar-btn close-btn" onclick="closeBrowser()">✕</button>
             </div>
-            <iframe id="proxyFrame" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals"></iframe>
+            <iframe id="proxyFrame" allow="autoplay; fullscreen; picture-in-picture; presentation"></iframe>
         </div>
     </div>
 
@@ -309,13 +418,52 @@
             document.getElementById('proxyFrame').src = document.getElementById('proxyFrame').src;
         }
 
+        function launchCloak() {
+            const status = document.getElementById('cloakStatus');
+            const cloakWindow = window.open('', '_blank');
+
+            if (!cloakWindow) {
+                status.textContent = 'Pop-up blocked. Allow pop-ups for this site and try again.';
+                return;
+            }
+
+            try {
+                const cloakDocument = cloakWindow.document;
+                cloakDocument.title = 'New Tab';
+
+                const viewport = cloakDocument.createElement('meta');
+                viewport.name = 'viewport';
+                viewport.content = 'width=device-width, initial-scale=1, viewport-fit=cover';
+                cloakDocument.head.appendChild(viewport);
+
+                const style = cloakDocument.createElement('style');
+                style.textContent = 'html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#0a0a0a}iframe{display:block;width:100%;height:100%;border:0}';
+                cloakDocument.head.appendChild(style);
+
+                const frame = cloakDocument.createElement('iframe');
+                frame.src = location.href;
+                frame.title = 'Nebula';
+                frame.allow = 'fullscreen';
+                cloakDocument.body.appendChild(frame);
+
+                cloakWindow.opener = null;
+                status.textContent = 'Cloak opened in a new tab.';
+            } catch (error) {
+                cloakWindow.close();
+                console.error('Cloak launch failed:', error);
+                status.textContent = 'The cloak could not be opened in this browser.';
+            }
+        }
+
         function showPage(name) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const page = document.getElementById(name + 'Page');
-            if (page) page.classList.add('active');
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             const link = document.getElementById(name + 'Link');
-            if (link) link.classList.add('active');
+            if (!page || !link) return;
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            page.classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
         }
 
         document.getElementById('goButton').addEventListener('click', navigate);
@@ -333,7 +481,7 @@
             } else if (query.includes('.') && !query.includes(' ')) {
                 url = 'https://' + query;
             } else {
-                url = 'https://www.google.com/search?q=' + encodeURIComponent(query);
+                url = document.getElementById('searchEngine').value + encodeURIComponent(query);
             }
             
             openProxy(url);
@@ -349,6 +497,13 @@
         });
 
         document.getElementById('urlInput').focus();
+
+        const searchEngine = document.getElementById('searchEngine');
+        searchEngine.value = localStorage.getItem('nebulaSearchEngine') || searchEngine.value;
+        searchEngine.addEventListener('change', () => {
+            localStorage.setItem('nebulaSearchEngine', searchEngine.value);
+        });
+        document.getElementById('cloakButton').addEventListener('click', launchCloak);
     </script>
 </body>
 </html>
