@@ -437,6 +437,36 @@
         .setting-select { color: var(--text-primary); background: #d8debd; border: 1px solid var(--text-primary); border-radius: 0; }
         .setting-button { color: var(--text-primary); background: var(--accent); border: 1px solid var(--text-primary); border-radius: 0; }
 
+        .setting-control { min-width: 220px; }
+        .setting-input {
+            width: 100%; color: var(--text-primary); background: #d8debd;
+            border: 1px solid var(--text-primary); border-radius: 0; padding: 11px 12px;
+            font: 700 12px/1 monospace; outline: none;
+        }
+        .setting-toggle { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font: 800 11px/1 monospace; text-transform: uppercase; }
+        .setting-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+        .toggle-track { position: relative; width: 50px; height: 26px; border: 1px solid var(--text-primary); background: #d8debd; }
+        .toggle-track::after { content: ""; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; background: var(--text-primary); transition: transform .2s ease; }
+        .setting-toggle input:checked + .toggle-track { background: var(--cyan); }
+        .setting-toggle input:checked + .toggle-track::after { transform: translateX(24px); }
+
+        .browser-toolbar {
+            min-height: 62px; color: #f1f1df; background: #1b1e1c;
+            border-bottom: 2px solid #c8ef58; padding: 8px 10px;
+        }
+        .toolbar-btn {
+            color: #f1f1df; background: #292d29; border: 1px solid #5d6558;
+            border-radius: 0; font-weight: 900;
+        }
+        .toolbar-btn:hover { color: #1b1e1c; background: #c8ef58; border-color: #c8ef58; }
+        .close-btn:hover { color: white; background: var(--danger); border-color: var(--danger); }
+        .browser-url-bar {
+            color: #f1f1df; background: #101310; border: 1px solid #5d6558;
+            border-radius: 0; font-family: monospace;
+        }
+        .browser-url-bar:focus { border-color: #c8ef58; box-shadow: inset 0 -2px #c8ef58; }
+        .toolbar-divider { width: 1px; height: 30px; background: #5d6558; margin: 0 2px; }
+
         @media (max-width: 760px) {
             .container { padding: 10px 10px 28px; }
             .navbar { margin-bottom: 12px; }
@@ -444,6 +474,9 @@
             .hero-title { top: 47%; font-size: clamp(72px, 25vw, 132px); width: 130%; }
             .hero-subtitle { max-width: 210px; font-size: 8px; }
             .quick-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .setting-control { width: 100%; min-width: 0; }
+            .browser-toolbar { gap: 5px; padding: 6px; }
+            .toolbar-btn { width: 38px; height: 38px; }
         }
 
         .loading-screen {
@@ -486,6 +519,10 @@
         (() => {
             const screen = document.getElementById('loadingScreen');
             const count = document.getElementById('loaderCount');
+            if (localStorage.getItem('aridiumShowLoader') === 'false') {
+                screen.classList.add('is-hidden');
+                return;
+            }
             const startedAt = Date.now();
             let progress = 0;
             let finished = false;
@@ -635,16 +672,58 @@
                     </div>
                     <button class="setting-button" id="cloakButton" type="button">Launch cloak</button>
                 </div>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Auto cloak</div>
+                        <div class="setting-help">Open searches in an About:Blank tab automatically.</div>
+                    </div>
+                    <label class="setting-toggle">
+                        <input type="checkbox" id="autoCloakSetting">
+                        <span class="toggle-track" aria-hidden="true"></span>
+                        <span>Enabled</span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Loading animation</div>
+                        <div class="setting-help">Show the Aridium boot screen when the app starts.</div>
+                    </div>
+                    <label class="setting-toggle">
+                        <input type="checkbox" id="loaderSetting" checked>
+                        <span class="toggle-track" aria-hidden="true"></span>
+                        <span>Enabled</span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Panic destination</div>
+                        <div class="setting-help">Opened when you press Escape.</div>
+                    </div>
+                    <div class="setting-control">
+                        <input class="setting-input" id="panicUrlSetting" type="url" value="https://www.google.com" aria-label="Panic destination">
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-label">Local browsing data</div>
+                        <div class="setting-help">Clear saved preferences and proxy state on this device.</div>
+                    </div>
+                    <button class="setting-button" id="clearDataButton" type="button">Clear data</button>
+                </div>
             </div>
         </div>
 
         <div class="browser-overlay" id="browserOverlay">
             <div class="browser-toolbar">
-                <button class="toolbar-btn" onclick="browserBack()">←</button>
-                <button class="toolbar-btn" onclick="browserForward()">→</button>
-                <button class="toolbar-btn" onclick="browserRefresh()">↻</button>
-                <input type="text" id="browserUrl" class="browser-url-bar" readonly onclick="this.select()">
-                <button class="toolbar-btn close-btn" onclick="closeBrowser()">✕</button>
+                <button class="toolbar-btn" onclick="browserBack()" title="Back">←</button>
+                <button class="toolbar-btn" onclick="browserForward()" title="Forward">→</button>
+                <button class="toolbar-btn" onclick="browserRefresh()" title="Reload">↻</button>
+                <input type="text" id="browserUrl" class="browser-url-bar" aria-label="Current URL" autocomplete="off" spellcheck="false">
+                <button class="toolbar-btn" onclick="openProxyTab()" title="Open in new tab">↗</button>
+                <button class="toolbar-btn" onclick="toggleBrowserFullscreen()" title="Fullscreen">⛶</button>
+                <button class="toolbar-btn" onclick="toggleInspector()" title="Inspect page">⌘</button>
+                <span class="toolbar-divider" aria-hidden="true"></span>
+                <button class="toolbar-btn close-btn" onclick="closeBrowser()" title="Close browser">✕</button>
             </div>
             <iframe id="proxyFrame" allow="autoplay; fullscreen; picture-in-picture; presentation"></iframe>
         </div>
@@ -664,10 +743,15 @@
             }
         }
 
-        async function openProxy(url) {
+        async function openProxy(url, skipAutoCloak = false) {
             if (typeof __uv$config === 'undefined') {
                 alert('Ultraviolet not loaded. Please check your deployment.');
                 return;
+            }
+
+            if (!skipAutoCloak && window.self === window.top &&
+                localStorage.getItem('aridiumAutoCloak') === 'true') {
+                if (launchCloak(url)) return;
             }
 
             const searchHints = document.getElementById('searchHints');
@@ -704,13 +788,54 @@
             document.getElementById('proxyFrame').src = document.getElementById('proxyFrame').src;
         }
 
-        function launchCloak() {
+        function openProxyTab() {
+            const frameUrl = document.getElementById('proxyFrame').src;
+            if (frameUrl) window.open(frameUrl, '_blank', 'noopener');
+        }
+
+        async function toggleBrowserFullscreen() {
+            const overlay = document.getElementById('browserOverlay');
+            try {
+                if (document.fullscreenElement) await document.exitFullscreen();
+                else await overlay.requestFullscreen();
+            } catch (error) {
+                console.error('Fullscreen failed:', error);
+            }
+        }
+
+        function toggleInspector() {
+            const frame = document.getElementById('proxyFrame');
+            try {
+                const frameWindow = frame.contentWindow;
+                const frameDocument = frame.contentDocument;
+                if (!frameWindow || !frameDocument) throw new Error('Page is not ready.');
+
+                if (frameWindow.eruda) {
+                    frameWindow.eruda.show();
+                    return;
+                }
+
+                const script = frameDocument.createElement('script');
+                script.src = '/eruda/eruda.js';
+                script.onload = () => {
+                    frameWindow.eruda.init({ tool: ['console', 'elements', 'network', 'resources', 'info'] });
+                    frameWindow.eruda.show();
+                };
+                script.onerror = () => alert('Inspector could not be loaded.');
+                frameDocument.head.appendChild(script);
+            } catch (error) {
+                console.error('Inspector failed:', error);
+                alert('Inspector is unavailable until the page finishes loading.');
+            }
+        }
+
+        function launchCloak(targetUrl = '') {
             const status = document.getElementById('cloakStatus');
             const cloakWindow = window.open('', '_blank');
 
             if (!cloakWindow) {
-                status.textContent = 'Pop-up blocked. Allow pop-ups for this site and try again.';
-                return;
+                if (status) status.textContent = 'Pop-up blocked. Allow pop-ups for this site and try again.';
+                return false;
             }
 
             try {
@@ -727,17 +852,22 @@
                 cloakDocument.head.appendChild(style);
 
                 const frame = cloakDocument.createElement('iframe');
-                frame.src = location.href;
+                const appUrl = new URL(location.href);
+                appUrl.searchParams.delete('cloakTarget');
+                if (targetUrl) appUrl.searchParams.set('cloakTarget', targetUrl);
+                frame.src = appUrl.href;
                 frame.title = 'Aridium';
                 frame.allow = 'fullscreen';
                 cloakDocument.body.appendChild(frame);
 
                 cloakWindow.opener = null;
-                status.textContent = 'Cloak opened in a new tab.';
+                if (status) status.textContent = 'Cloak opened in a new tab.';
+                return true;
             } catch (error) {
                 cloakWindow.close();
                 console.error('Cloak launch failed:', error);
-                status.textContent = 'The cloak could not be opened in this browser.';
+                if (status) status.textContent = 'The cloak could not be opened in this browser.';
+                return false;
             }
         }
 
@@ -757,28 +887,43 @@
             if (e.key === 'Enter') navigate();
         });
 
-        function navigate() {
-            let query = document.getElementById('urlInput').value.trim();
+        function normalizeAddress(query) {
+            query = query.trim();
             if (!query) return;
-            
-            let url;
+
             if (query.startsWith('http://') || query.startsWith('https://')) {
-                url = query;
-            } else if (query.includes('.') && !query.includes(' ')) {
-                url = 'https://' + query;
-            } else {
-                url = document.getElementById('searchEngine').value + encodeURIComponent(query);
+                return query;
             }
-            
-            openProxy(url);
+            if (query.includes('.') && !query.includes(' ')) return 'https://' + query;
+            return document.getElementById('searchEngine').value + encodeURIComponent(query);
         }
+
+        function navigate() {
+            const url = normalizeAddress(document.getElementById('urlInput').value);
+            if (url) openProxy(url);
+        }
+
+        const browserUrlInput = document.getElementById('browserUrl');
+        browserUrlInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const url = normalizeAddress(browserUrlInput.value);
+                if (url) openProxy(url, true);
+            }
+        });
 
         // Panic key
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') window.location.replace('https://www.google.com');
+            if (e.key === 'Escape') {
+                const panicUrl = localStorage.getItem('aridiumPanicUrl') || 'https://www.google.com';
+                window.location.replace(panicUrl);
+            }
             if (e.ctrlKey && e.key === 'l') {
                 e.preventDefault();
-                document.getElementById('urlInput').focus();
+                const activeInput = document.getElementById('browserOverlay').classList.contains('active')
+                    ? browserUrlInput : document.getElementById('urlInput');
+                activeInput.focus();
+                activeInput.select();
             }
         });
 
@@ -790,7 +935,41 @@
         searchEngine.addEventListener('change', () => {
             localStorage.setItem('aridiumSearchEngine', searchEngine.value);
         });
-        document.getElementById('cloakButton').addEventListener('click', launchCloak);
+        document.getElementById('cloakButton').addEventListener('click', () => launchCloak());
+
+        const autoCloakSetting = document.getElementById('autoCloakSetting');
+        const loaderSetting = document.getElementById('loaderSetting');
+        const panicUrlSetting = document.getElementById('panicUrlSetting');
+        autoCloakSetting.checked = localStorage.getItem('aridiumAutoCloak') === 'true';
+        loaderSetting.checked = localStorage.getItem('aridiumShowLoader') !== 'false';
+        panicUrlSetting.value = localStorage.getItem('aridiumPanicUrl') || panicUrlSetting.value;
+
+        autoCloakSetting.addEventListener('change', () => {
+            localStorage.setItem('aridiumAutoCloak', String(autoCloakSetting.checked));
+        });
+        loaderSetting.addEventListener('change', () => {
+            localStorage.setItem('aridiumShowLoader', String(loaderSetting.checked));
+        });
+        panicUrlSetting.addEventListener('change', () => {
+            try {
+                const value = new URL(panicUrlSetting.value).href;
+                localStorage.setItem('aridiumPanicUrl', value);
+                panicUrlSetting.value = value;
+            } catch {
+                panicUrlSetting.value = localStorage.getItem('aridiumPanicUrl') || 'https://www.google.com';
+            }
+        });
+        document.getElementById('clearDataButton').addEventListener('click', () => {
+            localStorage.clear();
+            sessionStorage.clear();
+            location.reload();
+        });
+
+        const cloakedTarget = new URLSearchParams(location.search).get('cloakTarget');
+        if (cloakedTarget && window.self !== window.top) {
+            history.replaceState(null, '', location.pathname);
+            setTimeout(() => openProxy(cloakedTarget, true), 0);
+        }
 
     </script>
 </body>
