@@ -247,14 +247,16 @@
             color: var(--text-secondary);
         }
 
-        .games-grid, .apps-grid {
+        .games-grid,
+        .apps-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 15px;
             padding: 20px 0;
         }
 
-        .game-card, .app-card {
+        .game-card,
+        .app-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 16px;
@@ -264,25 +266,29 @@
             transition: all 0.3s ease;
         }
 
-        .game-card:hover, .app-card:hover {
+        .game-card:hover,
+        .app-card:hover {
             background: var(--bg-secondary);
             border-color: var(--accent);
             transform: translateY(-4px);
             box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
         }
 
-        .game-emoji, .app-emoji {
+        .game-emoji,
+        .app-emoji {
             font-size: 48px;
             margin-bottom: 10px;
         }
 
-        .game-title, .app-title {
+        .game-title,
+        .app-title {
             font-size: 14px;
             font-weight: 600;
             color: var(--text-primary);
         }
 
-        .game-category, .app-category {
+        .game-category,
+        .app-category {
             font-size: 12px;
             color: var(--text-secondary);
             margin-top: 4px;
@@ -407,11 +413,11 @@
             border-radius: 50%;
         }
 
-        input:checked + .toggle-slider {
+        input:checked+.toggle-slider {
             background-color: var(--accent);
         }
 
-        input:checked + .toggle-slider:before {
+        input:checked+.toggle-slider:before {
             transform: translateX(24px);
         }
 
@@ -491,51 +497,59 @@
             .hero-title {
                 font-size: 32px;
             }
-            
-            .quick-links, .games-grid, .apps-grid {
+
+            .quick-links,
+            .games-grid,
+            .apps-grid {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 10px;
             }
 
-            .game-card, .app-card, .link-card {
+            .game-card,
+            .app-card,
+            .link-card {
                 padding: 15px 10px;
             }
 
-            .game-emoji, .app-emoji {
+            .game-emoji,
+            .app-emoji {
                 font-size: 36px;
             }
-            
+
             .link-emoji {
                 font-size: 24px;
             }
-            
+
             .navbar {
                 flex-wrap: wrap;
             }
-            
+
             .nav-links {
                 width: 100%;
                 justify-content: center;
                 margin-top: 10px;
                 gap: 5px;
             }
-            
+
             .nav-link {
                 font-size: 14px;
                 padding: 6px 12px;
             }
-            
+
             .container {
                 padding: 10px;
             }
         }
 
         @media (max-width: 480px) {
-            .quick-links, .games-grid, .apps-grid {
+
+            .quick-links,
+            .games-grid,
+            .apps-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
             }
-            
+
             .hero-title {
                 font-size: 28px;
             }
@@ -616,22 +630,52 @@
                 <div class="game-card" onclick="openProxy('https://www.coolmathgames.com')">
                     <div class="game-emoji">🧮</div>
                     <div class="game-title">Cool Math Games</div>
+                    <div class="game-category">Educational</div>
                 </div>
                 <div class="game-card" onclick="openProxy('https://www.poki.com')">
                     <div class="game-emoji">🎯</div>
                     <div class="game-title">Poki</div>
+                    <div class="game-category">Arcade</div>
                 </div>
                 <div class="game-card" onclick="openProxy('https://www.crazygames.com')">
                     <div class="game-emoji">🎪</div>
                     <div class="game-title">Crazy Games</div>
+                    <div class="game-category">Variety</div>
                 </div>
                 <div class="game-card" onclick="openProxy('https://krunker.io')">
                     <div class="game-emoji">🔫</div>
                     <div class="game-title">Krunker.io</div>
+                    <div class="game-category">FPS</div>
                 </div>
                 <div class="game-card" onclick="openProxy('https://slither.io')">
                     <div class="game-emoji">🐍</div>
                     <div class="game-title">Slither.io</div>
+                    <div class="game-category">Multiplayer</div>
+                </div>
+                <div class="game-card" onclick="openProxy('https://agar.io')">
+                    <div class="game-emoji">🦠</div>
+                    <div class="game-title">Agar.io</div>
+                    <div class="game-category">Multiplayer</div>
+                </div>
+                <div class="game-card" onclick="openProxy('https://diep.io')">
+                    <div class="game-emoji">🎮</div>
+                    <div class="game-title">Diep.io</div>
+                    <div class="game-category">Shooter</div>
+                </div>
+                <div class="game-card" onclick="openProxy('https://www.addictinggames.com')">
+                    <div class="game-emoji">🕹️</div>
+                    <div class="game-title">Addicting Games</div>
+                    <div class="game-category">Variety</div>
+                </div>
+                <div class="game-card" onclick="openProxy('https://www.miniclip.com')">
+                    <div class="game-emoji">🎳</div>
+                    <div class="game-title">Miniclip</div>
+                    <div class="game-category">Arcade</div>
+                </div>
+                <div class="game-card" onclick="openProxy('https://www.kongregate.com')">
+                    <div class="game-emoji">👾</div>
+                    <div class="game-title">Kongregate</div>
+                    <div class="game-category">Variety</div>
                 </div>
             </div>
         </div>
@@ -642,24 +686,49 @@
                 <div class="app-card" onclick="openProxy('https://docs.google.com')">
                     <div class="app-emoji">📄</div>
                     <div class="app-title">Google Docs</div>
+                    <div class="app-category">Productivity</div>
                 </div>
                 <div class="app-card" onclick="openProxy('https://www.canva.com')">
                     <div class="app-emoji">🎨</div>
                     <div class="app-title">Canva</div>
+                    <div class="app-category">Design</div>
+                </div>
+                <div class="app-card" onclick="openProxy('https://web.whatsapp.com')">
+                    <div class="app-emoji">💭</div>
+                    <div class="app-title">WhatsApp</div>
+                    <div class="app-category">Messaging</div>
                 </div>
                 <div class="app-card" onclick="openProxy('https://web.telegram.org')">
                     <div class="app-emoji">✈️</div>
                     <div class="app-title">Telegram</div>
+                    <div class="app-category">Messaging</div>
                 </div>
                 <div class="app-card" onclick="openProxy('https://www.photopea.com')">
                     <div class="app-emoji">🖼️</div>
                     <div class="app-title">Photopea</div>
+                    <div class="app-category">Photo Editor</div>
+                </div>
+                <div class="app-card" onclick="openProxy('https://www.figma.com')">
+                    <div class="app-emoji">✏️</div>
+                    <div class="app-title">Figma</div>
+                    <div class="app-category">Design</div>
+                </div>
+                <div class="app-card" onclick="openProxy('https://www.notion.so')">
+                    <div class="app-emoji">📝</div>
+                    <div class="app-title">Notion</div>
+                    <div class="app-category">Notes</div>
+                </div>
+                <div class="app-card" onclick="openProxy('https://vscode.dev')">
+                    <div class="app-emoji">💻</div>
+                    <div class="app-title">VS Code</div>
+                    <div class="app-category">Coding</div>
                 </div>
             </div>
         </div>
 
         <div class="page" id="settingsPage">
             <h2 style="text-align: center; margin-bottom: 20px;"><span class="gradient-text">Settings</span></h2>
+
             <div class="settings-section">
                 <h3 class="settings-title">🔍 Search Engine</h3>
                 <div class="setting-item">
@@ -671,23 +740,47 @@
                         <option value="google">Google</option>
                         <option value="duckduckgo">DuckDuckGo</option>
                         <option value="bing">Bing</option>
+                        <option value="brave">Brave</option>
                     </select>
                 </div>
                 <button class="save-button" onclick="saveSearchEngine()">Save Search Engine</button>
+                <div id="searchStatus" class="status-message"></div>
             </div>
+
             <div class="settings-section">
                 <h3 class="settings-title">🎨 Appearance</h3>
                 <div class="setting-item">
                     <div>
                         <div class="setting-label">Cloaking</div>
-                        <div class="setting-description">Disguise as Google Classroom</div>
+                        <div class="setting-description">Change tab title to disguise as another site</div>
                     </div>
                     <label class="toggle-switch">
                         <input type="checkbox" id="cloakingToggle" onchange="toggleCloaking()">
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Panic Key</div>
+                        <div class="setting-description">Press this key to quickly hide the site</div>
+                    </div>
+                    <select id="panicKeySelect" class="setting-select">
+                        <option value="Escape">Escape</option>
+                        <option value="Backquote">` (Backtick)</option>
+                    </select>
+                </div>
                 <button class="save-button" onclick="saveAppearance()">Save Settings</button>
+                <div id="appearanceStatus" class="status-message"></div>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="settings-title">ℹ️ About</h3>
+                <div class="setting-item">
+                    <div>
+                        <div class="setting-label">Nebula Proxy v1.0</div>
+                        <div class="setting-description">A modern web proxy for browsing freely</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -703,10 +796,7 @@
         </div>
     </div>
 
-    <script src="/uv/uv.bundle.js"></script>
-    <script src="/uv/uv.config.js"></script>
     <script>
-        // Page Navigation
         function showPage(pageName) {
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(pageName + 'Page').classList.add('active');
@@ -714,14 +804,9 @@
             document.getElementById(pageName + 'Link').classList.add('active');
         }
 
-        // Ultraviolet Proxy
         function openProxy(url) {
             document.getElementById('browserOverlay').classList.add('active');
-            
-            // Use Ultraviolet's encode function
-            const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
-            
-            document.getElementById('proxyFrame').src = encodedUrl;
+            document.getElementById('proxyFrame').src = '/service/' + encodeURIComponent(url);
             document.getElementById('browserUrl').value = url;
         }
 
@@ -731,18 +816,17 @@
         }
 
         function browserBack() {
-            document.getElementById('proxyFrame').contentWindow.history.back();
+            try { document.getElementById('proxyFrame').contentWindow.history.back(); } catch(e) {}
         }
 
         function browserForward() {
-            document.getElementById('proxyFrame').contentWindow.history.forward();
+            try { document.getElementById('proxyFrame').contentWindow.history.forward(); } catch(e) {}
         }
 
         function browserRefresh() {
             document.getElementById('proxyFrame').src = document.getElementById('proxyFrame').src;
         }
 
-        // Search/URL Navigation
         document.getElementById('goButton').addEventListener('click', navigate);
         document.getElementById('urlInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') navigate();
@@ -751,74 +835,87 @@
         function navigate() {
             let query = document.getElementById('urlInput').value.trim();
             if (!query) return;
-            
             let url;
             if (query.startsWith('http://') || query.startsWith('https://')) {
                 url = query;
             } else if (query.includes('.') && !query.includes(' ')) {
                 url = 'https://' + query;
             } else {
-                const engine = localStorage.getItem('searchEngine') || 'google';
+                const engine = localStorage.getItem('nebulaSearchEngine') || 'google';
                 const searchUrls = {
                     google: 'https://www.google.com/search?q=',
                     duckduckgo: 'https://duckduckgo.com/?q=',
-                    bing: 'https://www.bing.com/search?q='
+                    bing: 'https://www.bing.com/search?q=',
+                    brave: 'https://search.brave.com/search?q='
                 };
                 url = searchUrls[engine] + encodeURIComponent(query);
             }
-            
             openProxy(url);
         }
 
         function saveSearchEngine() {
-            localStorage.setItem('searchEngine', document.getElementById('searchEngineSelect').value);
+            const engine = document.getElementById('searchEngineSelect').value;
+            localStorage.setItem('nebulaSearchEngine', engine);
+            const status = document.getElementById('searchStatus');
+            status.textContent = '✅ Search engine saved!';
+            status.className = 'status-message success';
+            setTimeout(() => status.className = 'status-message', 3000);
         }
 
         function toggleCloaking() {
             const toggle = document.getElementById('cloakingToggle');
             if (toggle.checked) {
                 document.title = 'Home';
-                localStorage.setItem('cloaking', 'true');
+                localStorage.setItem('nebulaCloaking', 'true');
             } else {
                 document.title = 'Nebula - Web Browser';
-                localStorage.setItem('cloaking', 'false');
+                localStorage.setItem('nebulaCloaking', 'false');
             }
         }
 
-        function saveAppearance() {}
-
-        // Panic key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                window.location.replace('https://www.google.com');
-            }
-        });
-
-        // Load settings
-        const savedEngine = localStorage.getItem('searchEngine');
-        if (savedEngine) document.getElementById('searchEngineSelect').value = savedEngine;
-        
-        if (localStorage.getItem('cloaking') === 'true') {
-            document.getElementById('cloakingToggle').checked = true;
-            document.title = 'Home';
+        function saveAppearance() {
+            localStorage.setItem('nebulaPanicKey', document.getElementById('panicKeySelect').value);
+            const status = document.getElementById('appearanceStatus');
+            status.textContent = '✅ Settings saved!';
+            status.className = 'status-message success';
+            setTimeout(() => status.className = 'status-message', 3000);
         }
 
-        // Hints
-        const hints = ['💡 Enter a URL or search anything!', '🔒 Private and encrypted browsing', '🎮 Check out the Games tab!'];
-        let hintIndex = 0;
-        setInterval(() => {
-            document.getElementById('searchHints').textContent = hints[hintIndex];
-            hintIndex = (hintIndex + 1) % hints.length;
-        }, 3000);
-
-        // Ctrl+L shortcut
         document.addEventListener('keydown', function(e) {
+            const panicKey = localStorage.getItem('nebulaPanicKey') || 'Escape';
+            if (e.key === panicKey) window.location.replace('https://www.google.com');
             if (e.ctrlKey && e.key === 'l') {
                 e.preventDefault();
                 document.getElementById('urlInput').focus();
             }
         });
 
+        function loadSettings() {
+            const savedEngine = localStorage.getItem('nebulaSearchEngine');
+            if (savedEngine) document.getElementById('searchEngineSelect').value = savedEngine;
+            if (localStorage.getItem('nebulaCloaking') === 'true') {
+                document.getElementById('cloakingToggle').checked = true;
+                document.title = 'Home';
+            }
+            const savedPanicKey = localStorage.getItem('nebulaPanicKey');
+            if (savedPanicKey) document.getElementById('panicKeySelect').value = savedPanicKey;
+        }
+
+        const hints = [
+            '💡 Pro tip: Enter a URL or search anything!',
+            '🔒 Your browsing is private and encrypted',
+            '⚡ Tip: Bookmark this page for quick access',
+            '🎮 Check out the Games tab for fun!',
+            '📱 Works great on mobile devices',
+            '🔧 Configure settings in the Settings tab'
+        ];
+        let hintIndex = 0;
+        setInterval(() => {
+            document.getElementById('searchHints').textContent = hints[hintIndex];
+            hintIndex = (hintIndex + 1) % hints.length;
+        }, 3000);
+
+        loadSettings();
         document.getElementById('urlInput').focus();
     </script>
 </body>
