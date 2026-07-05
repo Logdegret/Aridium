@@ -24,5 +24,28 @@ async function registerSW() {
 		throw new Error("Your browser doesn't support service workers.");
 	}
 
-	await navigator.serviceWorker.register(stockSW);
+	const registration = await navigator.serviceWorker.register(stockSW, {
+		scope: self.__uv$config.prefix,
+	});
+
+	if (registration.active || registration.waiting) return registration;
+
+	const worker = registration.installing;
+	if (!worker) return registration;
+
+	await new Promise((resolve, reject) => {
+		const timeoutId = setTimeout(resolve, 10000);
+
+		worker.addEventListener("statechange", () => {
+			if (worker.state === "activated") {
+				clearTimeout(timeoutId);
+				resolve();
+			} else if (worker.state === "redundant") {
+				clearTimeout(timeoutId);
+				reject(new Error("Service worker became redundant during registration."));
+			}
+		});
+	});
+
+	return registration;
 }

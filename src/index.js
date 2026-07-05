@@ -1,11 +1,11 @@
-import { join } from "node:path";
+import { resolve } from "node:path";
 import { hostname } from "node:os";
 import { createServer } from "node:http";
 import express from "express";
-import wisp from "wisp-server-node";
+import { server as wisp } from "@mercuryworkshop/wisp-js/server";
 
 import { uvPath } from "@titaniumnetwork-dev/ultraviolet";
-import { epoxyPath } from "@mercuryworkshop/epoxy-transport";
+import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 
 const app = express();
@@ -14,25 +14,31 @@ app.use(express.static("./public"));
 // Load vendor files last.
 // The vendor's uv.config.js won't conflict with our uv.config.js inside the publicPath directory.
 app.use("/uv/", express.static(uvPath));
-app.use("/epoxy/", express.static(epoxyPath));
+app.use("/libcurl/", express.static(libcurlPath));
 app.use("/baremux/", express.static(baremuxPath));
 
 // Error for everything else
 app.use((req, res) => {
 	res.status(404);
-	res.sendFile("./public/404.html");
+	res.sendFile(resolve("./public/404.html"));
 });
 
 const server = createServer();
 
 server.on("request", (req, res) => {
 	res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-	res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+	res.setHeader("Cross-Origin-Embedder-Policy", "credentialless");
+	res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
 	app(req, res);
 });
 server.on("upgrade", (req, socket, head) => {
-	if (req.url.endsWith("/wisp/")) {
-		wisp.routeRequest(req, socket, head);
+	if (req.url.startsWith("/wisp/")) {
+		try {
+			wisp.routeRequest(req, socket, head);
+		} catch (error) {
+			console.error("Wisp upgrade error:", error);
+			socket.destroy();
+		}
 		return;
 	} 
 	socket.end();

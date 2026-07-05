@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nebula - Web Browser</title>
+    <title>Aridium - Web Browser</title>
     <script src="/uv/uv.bundle.js"></script>
     <script src="/uv/uv.config.js"></script>
     <script src="/baremux/index.js"></script>
@@ -222,14 +222,299 @@
             .setting-row { align-items: stretch; flex-direction: column; }
             .setting-select, .setting-button { width: 100%; min-width: 0; }
         }
+
+        /* Aridium interface refresh */
+        :root {
+            --bg-primary: #03050b;
+            --bg-secondary: #080d18;
+            --bg-card: rgba(10, 17, 31, 0.74);
+            --text-primary: #f4f8ff;
+            --text-secondary: #8290a8;
+            --accent: #6d5dfc;
+            --accent-hover: #8b7dff;
+            --gradient-1: #6fffe9;
+            --gradient-2: #8b7dff;
+            --gradient-3: #e66cff;
+            --border: rgba(133, 156, 194, 0.16);
+            --danger: #ff5575;
+            --cyan: #6fffe9;
+        }
+
+        body {
+            font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at 50% -20%, rgba(109, 93, 252, 0.2), transparent 43%),
+                linear-gradient(180deg, #050812 0%, #02040a 100%);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            inset: 0; width: auto; height: auto;
+            background-image:
+                linear-gradient(rgba(111, 255, 233, 0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(111, 255, 233, 0.035) 1px, transparent 1px);
+            background-size: 46px 46px;
+            -webkit-mask-image: linear-gradient(to bottom, black, transparent 75%);
+            mask-image: linear-gradient(to bottom, black, transparent 75%);
+        }
+
+        body::after {
+            content: ""; position: fixed; width: 520px; height: 520px;
+            left: 50%; top: 160px; translate: -50% 0; border-radius: 50%;
+            background: rgba(109, 93, 252, 0.1); filter: blur(100px);
+            pointer-events: none;
+        }
+
+        .container { max-width: 1180px; padding: 24px 28px 64px; }
+
+        .navbar {
+            padding: 10px 12px 10px 18px; margin-bottom: 70px;
+            background: rgba(5, 9, 18, 0.72); border-color: rgba(111, 255, 233, 0.12);
+            border-radius: 20px; box-shadow: 0 18px 60px rgba(0, 0, 0, 0.26);
+            backdrop-filter: blur(24px) saturate(140%);
+        }
+
+        .logo { gap: 12px; font-size: 18px; letter-spacing: 0.08em; text-transform: uppercase; }
+        .logo-orb {
+            position: relative; width: 34px; height: 34px; display: grid; place-items: center;
+            border: 1px solid rgba(111, 255, 233, 0.32); border-radius: 11px;
+            background: linear-gradient(145deg, rgba(111, 255, 233, 0.13), rgba(109, 93, 252, 0.22));
+            box-shadow: inset 0 0 18px rgba(111, 255, 233, 0.08), 0 0 24px rgba(109, 93, 252, 0.16);
+        }
+        .logo-orb::after { content: ""; width: 8px; height: 8px; background: var(--cyan); border-radius: 50%; box-shadow: 0 0 14px var(--cyan); }
+        .logo-word span { color: var(--cyan); }
+
+        .nav-links { gap: 4px; }
+        .nav-link {
+            position: relative; padding: 10px 15px; border: 1px solid transparent;
+            border-radius: 12px; font-size: 13px; letter-spacing: 0.02em;
+        }
+        .nav-link:hover { color: #dce6f8; background: rgba(255, 255, 255, 0.035); }
+        .nav-link.active {
+            color: white; background: rgba(109, 93, 252, 0.14);
+            border-color: rgba(139, 125, 255, 0.24); box-shadow: inset 0 0 16px rgba(109, 93, 252, 0.08);
+        }
+
+        .hero-section { margin-bottom: 36px; }
+        .hero-eyebrow {
+            display: inline-flex; align-items: center; gap: 9px; margin-bottom: 20px;
+            color: var(--cyan); font-size: 11px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+        }
+        .hero-eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }
+        .hero-title { font-size: clamp(44px, 7vw, 76px); line-height: 0.98; letter-spacing: -0.055em; margin-bottom: 20px; }
+        .gradient-text { background: linear-gradient(100deg, #f7f9ff 14%, #83fff0 48%, #a799ff 74%, #f07cff); -webkit-background-clip: text; }
+        .hero-subtitle { max-width: 520px; margin: 0 auto; line-height: 1.65; font-size: 16px; }
+
+        .search-container { max-width: 780px; margin-bottom: 54px; }
+        .search-box {
+            position: relative; padding: 7px; border: 1px solid rgba(139, 125, 255, 0.25); border-radius: 19px;
+            background: rgba(8, 14, 27, 0.8); box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38), inset 0 1px rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(22px);
+        }
+        .search-box::before { content: ""; position: absolute; inset: -1px; z-index: -1; border-radius: 20px; background: linear-gradient(100deg, rgba(111,255,233,.28), transparent 32%, transparent 68%, rgba(230,108,255,.2)); filter: blur(10px); opacity: .65; }
+        .search-box:focus-within { border-color: rgba(111, 255, 233, 0.55); box-shadow: 0 0 0 4px rgba(111, 255, 233, 0.06), 0 24px 70px rgba(0,0,0,.42); }
+        .search-icon { width: 38px; height: 38px; margin-left: 4px; display: grid; place-items: center; color: var(--cyan); font-size: 0; }
+        .search-icon::after { content: "⌕"; font-size: 28px; line-height: 1; }
+        .url-input { padding: 15px 10px; font-size: 15px; }
+        .url-input::placeholder { color: #59667b; }
+        .go-button { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(145deg, #8272ff, #5b4ae9); box-shadow: 0 8px 26px rgba(109, 93, 252, .35); }
+        .go-button:hover { background: linear-gradient(145deg, #9b8fff, #7161f6); box-shadow: 0 10px 32px rgba(109, 93, 252, .5); }
+        .search-hints { margin-top: 15px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+
+        .quick-links { gap: 13px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .link-card {
+            position: relative; overflow: hidden; min-height: 126px; display: grid; place-content: center;
+            background: linear-gradient(145deg, rgba(13, 22, 39, .8), rgba(6, 10, 20, .75));
+            border-color: var(--border); border-radius: 18px; padding: 22px 14px;
+            box-shadow: inset 0 1px rgba(255,255,255,.025);
+        }
+        .link-card::after { content: ""; position: absolute; left: 20%; right: 20%; bottom: -1px; height: 1px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: 0; transition: .3s ease; }
+        .link-card:hover { background: linear-gradient(145deg, rgba(18, 29, 51, .92), rgba(8, 13, 25, .9)); border-color: rgba(111,255,233,.26); transform: translateY(-5px); box-shadow: 0 20px 45px rgba(0,0,0,.32), 0 0 28px rgba(111,255,233,.05); }
+        .link-card:hover::after { opacity: 1; left: 8%; right: 8%; }
+        .link-emoji { filter: saturate(.82); font-size: 30px; margin-bottom: 12px; }
+        .link-card span { color: #aab6ca; font-size: 12px; font-weight: 650; letter-spacing: .09em; text-transform: uppercase; }
+
+        .page-header { margin: 0 0 34px; }
+        .page-title { font-size: clamp(38px, 5vw, 58px); letter-spacing: -.045em; }
+        .page-description { font-size: 15px; }
+        .settings-card { max-width: none; background: rgba(8,14,27,.72); border-radius: 20px; padding: 28px; backdrop-filter: blur(20px); }
+        .setting-select { background: #090f1d; border-color: rgba(139,125,255,.25); }
+        .setting-button { background: linear-gradient(145deg, #8272ff, #5b4ae9); }
+
+        .browser-toolbar { background: #060a13; border-color: rgba(111,255,233,.12); padding: 9px 12px; }
+        .toolbar-btn, .browser-url-bar { background: #0a1120; border-color: rgba(133,156,194,.16); }
+
+        @media (max-width: 760px) {
+            .container { padding: 12px 12px 42px; }
+            .navbar { margin-bottom: 54px; padding: 10px; }
+            .logo-word { font-size: 15px; }
+            .nav-link { padding: 9px 10px; font-size: 0; }
+            .nav-link::first-letter { font-size: 16px; }
+            #homeLink { font-size: 12px; }
+            .quick-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .hero-title { font-size: clamp(42px, 14vw, 64px); }
+        }
+
+        /* Retro editorial direction */
+        :root {
+            --bg-primary: #a9b291;
+            --bg-secondary: #9fa98a;
+            --bg-card: rgba(216, 222, 190, .54);
+            --text-primary: #1b1e1c;
+            --text-secondary: #454b42;
+            --accent: #ff5a16;
+            --accent-hover: #e84d0d;
+            --gradient-1: #1b1e1c;
+            --gradient-2: #1b1e1c;
+            --gradient-3: #1b1e1c;
+            --border: rgba(27, 30, 28, .72);
+            --cyan: #c8ef58;
+            --danger: #d43824;
+        }
+
+        body {
+            color: var(--text-primary);
+            background:
+                radial-gradient(circle at 66% 33%, rgba(218, 239, 133, .28), transparent 27%),
+                linear-gradient(110deg, rgba(255,255,255,.04), transparent 44%),
+                #a9b291;
+        }
+
+        body::before {
+            opacity: .22; mask-image: none; -webkit-mask-image: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.2'/%3E%3C/svg%3E");
+            background-size: 150px 150px; mix-blend-mode: multiply;
+        }
+        body::after { display: none; }
+
+        .container { max-width: 1440px; padding: 18px 28px 34px; }
+        .navbar {
+            margin-bottom: 20px; padding: 7px 9px 7px 14px; color: var(--text-primary);
+            background: rgba(169,178,145,.68); border: 1px solid rgba(27,30,28,.62);
+            border-radius: 0; box-shadow: none; backdrop-filter: blur(9px);
+        }
+        .logo { font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif; font-size: 17px; letter-spacing: .11em; }
+        .logo-orb { width: 24px; height: 24px; border: 0; border-radius: 0; background: var(--text-primary); box-shadow: none; clip-path: polygon(0 0, 43% 42%, 100% 50%, 43% 58%, 0 100%, 10% 50%); }
+        .logo-orb::after { display: none; }
+        .logo-word span { color: var(--accent); }
+        .nav-links { gap: 2px; }
+        .nav-link { color: #292d29; padding: 8px 13px; border: 1px solid transparent; border-radius: 0; font-family: "Arial Narrow", Arial, sans-serif; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+        .nav-link:hover { color: var(--text-primary); background: rgba(210,221,180,.38); }
+        .nav-link.active { color: #f0f1df; background: var(--text-primary); border-color: var(--text-primary); box-shadow: none; }
+
+        .hero-section { position: relative; min-height: 420px; margin: 0 0 16px; overflow: hidden; border-bottom: 1px solid rgba(27,30,28,.62); }
+        .hero-rail { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 22px; font: 800 10px/1 "Arial Narrow", Arial, sans-serif; letter-spacing: .11em; text-transform: uppercase; }
+        .hero-rail::before, .hero-rail::after { content: ""; height: 5px; border-top: 1px solid var(--text-primary); border-bottom: 1px solid var(--text-primary); clip-path: polygon(0 40%, 15% 40%, 16% 0, 18% 0, 19% 40%, 72% 40%, 73% 0, 79% 0, 80% 40%, 100% 40%, 100% 60%, 80% 60%, 79% 100%, 73% 100%, 72% 60%, 19% 60%, 18% 100%, 16% 100%, 15% 60%, 0 60%); background: var(--text-primary); }
+        .hero-eyebrow { margin: 0; color: var(--text-primary); font: 800 10px/1 "Arial Narrow", Arial, sans-serif; letter-spacing: .12em; }
+        .hero-eyebrow::before { display: none; }
+        .hero-title { position: absolute; z-index: 0; left: 50%; top: 47%; width: 118%; transform: translate(-50%, -50%); margin: 0; font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif; font-size: clamp(94px, 15vw, 230px); font-weight: 900; line-height: .72; letter-spacing: -.035em; text-transform: uppercase; white-space: nowrap; }
+        .gradient-text { color: var(--text-primary); background: none; -webkit-text-fill-color: currentColor; }
+        .hero-subtitle { position: absolute; z-index: 3; left: 0; bottom: 13px; max-width: 290px; color: var(--text-primary); margin: 0; text-align: left; font: 700 10px/1.35 monospace; letter-spacing: .04em; text-transform: uppercase; }
+
+        .search-container { position: relative; z-index: 4; max-width: 860px; margin: -3px auto 30px; }
+        .search-box { border: 2px solid var(--text-primary); border-radius: 0; padding: 5px; background: #d8debd; box-shadow: 8px 8px 0 rgba(27,30,28,.84); backdrop-filter: none; }
+        .search-box::before { display: none; }
+        .search-box:focus-within { border-color: var(--text-primary); box-shadow: 8px 8px 0 var(--accent); }
+        .search-icon { color: var(--text-primary); }
+        .url-input { color: var(--text-primary); font-family: monospace; font-weight: 700; text-transform: none; }
+        .url-input::placeholder { color: #62695b; }
+        .go-button { border: 2px solid var(--text-primary); border-radius: 0; color: var(--text-primary); background: var(--accent); box-shadow: none; font-weight: 900; }
+        .go-button:hover { color: white; background: var(--text-primary); box-shadow: none; transform: none; }
+        .search-hints { color: var(--text-primary); text-align: right; font-family: monospace; font-size: 9px; font-weight: 800; letter-spacing: .08em; }
+
+        .quick-links { gap: 9px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .link-card { min-height: 104px; border: 1px solid rgba(27,30,28,.72); border-radius: 0; background: rgba(211,220,187,.44); box-shadow: none; }
+        .link-card::after { left: 0; right: auto; bottom: 0; width: 0; height: 6px; background: var(--accent); }
+        .link-card:hover { color: #efefdc; border-color: var(--text-primary); background: var(--text-primary); box-shadow: none; transform: translateY(-3px); }
+        .link-card:hover::after { width: 100%; left: 0; right: auto; }
+        .link-card span { color: inherit; font-family: "Arial Narrow", Arial, sans-serif; font-weight: 900; letter-spacing: .09em; }
+        .link-emoji { filter: grayscale(1) contrast(1.4); }
+
+        .page-title { font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif; text-transform: uppercase; color: var(--text-primary); letter-spacing: -.02em; }
+        .page-description, .setting-help, .setting-status { color: var(--text-secondary); }
+        .settings-card { background: rgba(211,220,187,.42); border: 1px solid var(--text-primary); border-radius: 0; backdrop-filter: none; }
+        .setting-row + .setting-row { border-color: rgba(27,30,28,.35); }
+        .setting-select { color: var(--text-primary); background: #d8debd; border: 1px solid var(--text-primary); border-radius: 0; }
+        .setting-button { color: var(--text-primary); background: var(--accent); border: 1px solid var(--text-primary); border-radius: 0; }
+
+        @media (max-width: 760px) {
+            .container { padding: 10px 10px 28px; }
+            .navbar { margin-bottom: 12px; }
+            .hero-section { min-height: 330px; }
+            .hero-title { top: 47%; font-size: clamp(72px, 25vw, 132px); width: 130%; }
+            .hero-subtitle { max-width: 210px; font-size: 8px; }
+            .quick-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        .loading-screen {
+            position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center;
+            color: var(--text-primary); background: var(--bg-primary);
+            transition: opacity .5s ease, visibility .5s ease;
+        }
+        .loading-screen.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-inner { width: min(430px, calc(100vw - 48px)); }
+        .loader-brand { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; font: 900 clamp(42px, 10vw, 78px)/.8 Impact, sans-serif; text-transform: uppercase; }
+        .loader-count { color: var(--accent); font: 900 13px/1 monospace; }
+        .loader-track { height: 12px; border: 2px solid var(--text-primary); padding: 2px; }
+        .loader-bar { width: 0; height: 100%; background: var(--text-primary); animation: load-progress 1.25s cubic-bezier(.65,0,.2,1) forwards; }
+        .loader-meta { display: flex; justify-content: space-between; margin-top: 9px; font: 800 8px/1 monospace; letter-spacing: .08em; text-transform: uppercase; }
+        @keyframes load-progress { to { width: 100%; } }
+
+        @media (prefers-reduced-motion: reduce) {
+            .loader-bar { animation-duration: .01ms; }
+            .link-image { transition: none; }
+        }
+
+        .hero-title { z-index: 3; pointer-events: none; }
+
+        .link-card { min-height: 154px; grid-template-rows: 1fr auto; gap: 12px; }
+        .link-image-wrap { width: 100%; min-height: 82px; display: grid; place-items: center; overflow: hidden; }
+        .link-image { width: 64px; height: 64px; display: block; object-fit: contain; filter: grayscale(.15) saturate(.88) contrast(1.06); transition: transform .3s ease, filter .3s ease; }
+        .link-card:hover .link-image { transform: scale(1.08) rotate(-3deg); filter: grayscale(0) saturate(1.15); }
+        .link-card > span:last-child { align-self: end; }
     </style>
 </head>
 <body>
+    <div class="loading-screen" id="loadingScreen" aria-label="Loading Aridium">
+        <div class="loader-inner">
+            <div class="loader-brand">Aridium <span class="loader-count" id="loaderCount">00</span></div>
+            <div class="loader-track"><div class="loader-bar"></div></div>
+            <div class="loader-meta"><span>Initialising private relay</span><span>ARD / 2026</span></div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            const screen = document.getElementById('loadingScreen');
+            const count = document.getElementById('loaderCount');
+            const startedAt = Date.now();
+            let progress = 0;
+            let finished = false;
+
+            const timer = setInterval(() => {
+                progress = Math.min(96, progress + Math.ceil((100 - progress) * 0.12));
+                count.textContent = String(progress).padStart(2, '0');
+            }, 90);
+
+            function dismissLoader() {
+                if (finished) return;
+                finished = true;
+                const remainingDelay = Math.max(0, 900 - (Date.now() - startedAt));
+                setTimeout(() => {
+                    clearInterval(timer);
+                    count.textContent = '100';
+                    screen.classList.add('is-hidden');
+                }, remainingDelay);
+            }
+
+            window.addEventListener('load', dismissLoader, { once: true });
+            setTimeout(dismissLoader, 2500);
+        })();
+    </script>
     <div class="container">
         <nav class="navbar">
             <div class="logo">
-                <span>🌌</span>
-                <span>Nebula</span>
+                <span class="logo-orb" aria-hidden="true"></span>
+                <span class="logo-word">Aridium<span>_</span></span>
             </div>
             <div class="nav-links">
                 <button class="nav-link active" onclick="showPage('home')" id="homeLink">Home</button>
@@ -241,8 +526,9 @@
 
         <div class="page active" id="homePage">
             <div class="hero-section">
+                <div class="hero-rail"><span class="hero-eyebrow">Private relay / 2026</span></div>
                 <h1 class="hero-title"><span class="gradient-text">Browse Freely</span></h1>
-                <p class="hero-subtitle">Fast, secure, and private web browsing</p>
+                <p class="hero-subtitle">ARD-01 / private network terminal<br>Light. Fast. Unrestricted.</p>
             </div>
 
             <div class="search-container">
@@ -256,28 +542,28 @@
 
             <div class="quick-links">
                 <div class="link-card" onclick="openProxy('https://www.youtube.com')">
-                    <span class="link-emoji">▶️</span><span>YouTube</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=youtube.com&sz=128" alt="YouTube"></span><span>YouTube</span>
                 </div>
                 <div class="link-card" onclick="openProxy('https://www.reddit.com')">
-                    <span class="link-emoji">🤖</span><span>Reddit</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=reddit.com&sz=128" alt="Reddit"></span><span>Reddit</span>
                 </div>
                 <div class="link-card" onclick="openProxy('https://discord.com')">
-                    <span class="link-emoji">💬</span><span>Discord</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=discord.com&sz=128" alt="Discord"></span><span>Discord</span>
                 </div>
                 <div class="link-card" onclick="openProxy('https://www.tiktok.com')">
-                    <span class="link-emoji">🎵</span><span>TikTok</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=tiktok.com&sz=128" alt="TikTok"></span><span>TikTok</span>
                 </div>
                 <div class="link-card" onclick="openProxy('https://twitter.com')">
-                    <span class="link-emoji">🐦</span><span>Twitter</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=x.com&sz=128" alt="X"></span><span>Twitter / X</span>
                 </div>
                 <div class="link-card" onclick="openProxy('https://www.spotify.com')">
-                    <span class="link-emoji">🎧</span><span>Spotify</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=spotify.com&sz=128" alt="Spotify"></span><span>Spotify</span>
                 </div>
                 <div class="link-card" onclick="openProxy('https://www.netflix.com')">
-                    <span class="link-emoji">🎬</span><span>Netflix</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=netflix.com&sz=128" alt="Netflix"></span><span>Netflix</span>
                 </div>
                 <div class="link-card" onclick="openProxy('https://github.com')">
-                    <span class="link-emoji">💻</span><span>GitHub</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=github.com&sz=128" alt="GitHub"></span><span>GitHub</span>
                 </div>
             </div>
         </div>
@@ -285,20 +571,20 @@
         <div class="page" id="gamesPage">
             <div class="page-header">
                 <h1 class="page-title"><span class="gradient-text">Games</span></h1>
-                <p class="page-description">Choose a game site to open it through Nebula.</p>
+                <p class="page-description">Choose a game site to open it through Aridium.</p>
             </div>
             <div class="quick-links">
                 <div class="link-card" onclick="openProxy('https://poki.com')">
-                    <span class="link-emoji">🕹️</span><span>Poki</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=poki.com&sz=128" alt="Poki"></span><span>Poki</span>
                 </div>
                 <div class="link-card" onclick="openProxy('https://www.crazygames.com')">
-                    <span class="link-emoji">🎮</span><span>CrazyGames</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=crazygames.com&sz=128" alt="CrazyGames"></span><span>CrazyGames</span>
                 </div>
                 <div class="link-card" onclick="openProxy('https://itch.io/games/html5')">
-                    <span class="link-emoji">👾</span><span>itch.io</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=itch.io&sz=128" alt="itch.io"></span><span>itch.io</span>
                 </div>
                 <div class="link-card" onclick="openProxy('https://www.newgrounds.com/games')">
-                    <span class="link-emoji">🏆</span><span>Newgrounds</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=newgrounds.com&sz=128" alt="Newgrounds"></span><span>Newgrounds</span>
                 </div>
             </div>
         </div>
@@ -310,16 +596,16 @@
             </div>
             <div class="quick-links">
                 <div class="link-card" onclick="openProxy('https://discord.com/app')">
-                    <span class="link-emoji">💬</span><span>Discord</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=discord.com&sz=128" alt="Discord"></span><span>Discord</span>
                 </div>
                 <div class="link-card" onclick="openProxy('https://open.spotify.com')">
-                    <span class="link-emoji">🎧</span><span>Spotify</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=spotify.com&sz=128" alt="Spotify"></span><span>Spotify</span>
                 </div>
                 <div class="link-card" onclick="openProxy('https://www.reddit.com')">
-                    <span class="link-emoji">🤖</span><span>Reddit</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=reddit.com&sz=128" alt="Reddit"></span><span>Reddit</span>
                 </div>
                 <div class="link-card" onclick="openProxy('https://github.com')">
-                    <span class="link-emoji">💻</span><span>GitHub</span>
+                    <span class="link-image-wrap"><img class="link-image" src="https://www.google.com/s2/favicons?domain=github.com&sz=128" alt="GitHub"></span><span>GitHub</span>
                 </div>
             </div>
         </div>
@@ -327,7 +613,7 @@
         <div class="page" id="settingsPage">
             <div class="page-header">
                 <h1 class="page-title"><span class="gradient-text">Settings</span></h1>
-                <p class="page-description">Customize how Nebula searches the web.</p>
+                <p class="page-description">Customize how Aridium searches the web.</p>
             </div>
             <div class="settings-card">
                 <div class="setting-row">
@@ -344,7 +630,7 @@
                 <div class="setting-row">
                     <div>
                         <div class="setting-label">About:Blank cloak</div>
-                        <div class="setting-help">Open Nebula inside a blank tab to hide its URL and title.</div>
+                        <div class="setting-help">Open Aridium inside a blank tab to hide its URL and title.</div>
                         <div class="setting-status" id="cloakStatus" aria-live="polite"></div>
                     </div>
                     <button class="setting-button" id="cloakButton" type="button">Launch cloak</button>
@@ -373,8 +659,8 @@
             const wispProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wispUrl = `${wispProtocol}//${location.host}/wisp/`;
 
-            if ((await connection.getTransport()) !== '/epoxy/index.mjs') {
-                await connection.setTransport('/epoxy/index.mjs', [{ wisp: wispUrl }]);
+            if ((await connection.getTransport()) !== '/libcurl/index.mjs') {
+                await connection.setTransport('/libcurl/index.mjs', [{ websocket: wispUrl }]);
             }
         }
 
@@ -442,7 +728,7 @@
 
                 const frame = cloakDocument.createElement('iframe');
                 frame.src = location.href;
-                frame.title = 'Nebula';
+                frame.title = 'Aridium';
                 frame.allow = 'fullscreen';
                 cloakDocument.body.appendChild(frame);
 
@@ -499,11 +785,13 @@
         document.getElementById('urlInput').focus();
 
         const searchEngine = document.getElementById('searchEngine');
-        searchEngine.value = localStorage.getItem('nebulaSearchEngine') || searchEngine.value;
+        searchEngine.value = localStorage.getItem('aridiumSearchEngine') ||
+            localStorage.getItem('nebulaSearchEngine') || searchEngine.value;
         searchEngine.addEventListener('change', () => {
-            localStorage.setItem('nebulaSearchEngine', searchEngine.value);
+            localStorage.setItem('aridiumSearchEngine', searchEngine.value);
         });
         document.getElementById('cloakButton').addEventListener('click', launchCloak);
+
     </script>
 </body>
 </html>
