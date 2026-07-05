@@ -741,6 +741,15 @@
     <script>
         const connection = new BareMux.BareMuxConnection('/baremux/worker.js');
         let transportPromise = null;
+        let scramjetReadyPromise = null;
+        let currentProxyBackend = 'scramjet';
+        const SCRAM_READY = 'scramjet-bridge-ready';
+        const SCRAM_ERROR = 'scramjet-bridge-error';
+        const SCRAM_LOAD = 'scramjet-load';
+        const SCRAM_BACK = 'scramjet-back';
+        const SCRAM_FORWARD = 'scramjet-forward';
+        const SCRAM_RELOAD = 'scramjet-reload';
+        const SCRAM_URL = 'scramjet-host-url';
 
         async function ensureTransport(wispUrl) {
             if ((await connection.getTransport()) === '/libcurl/index.mjs') return;
@@ -765,67 +774,126 @@
             await ensureTransport(wispUrl);
         }
 
+        function ensureScramjetBridge() {
+            if (scramjetReadyPromise) return scramjetReadyPromise;
+
+            const frame = document.getElementById('proxyFrame');
+            scramjetReadyPromise = new Promise((resolve, reject) => {
+                const timeout = setTimeout(() => {
+                    scramjetReadyPromise = null;
+                    reject(new Error('Scramjet bridge timed out.'));
+                }, 15000);
+
+                function onMessage(event) {
+                    if (event.origin !== location.origin || event.source !== frame.contentWindow) return;
+                    if (event.data?.type === SCRAM_READY) {
+                        clearTimeout(timeout);
+                        window.removeEventListener('message', onMessage);
+                        resolve();
+                    } else if (event.data?.type === SCRAM_ERROR) {
+                        clearTimeout(timeout);
+                        window.removeEventListener('message', onMessage);
+                        scramjetReadyPromise = null;
+                        reject(new Error(event.data.message || 'Scramjet failed to start.'));
+                    }
+                }
+
+                window.addEventListener('message', onMessage);
+                frame.src = '/scram/bridge.html?mode=host&v=1';
+            });
+            return scramjetReadyPromise;
+        }
+
         async function openProxy(url, skipAutoCloak = false) {
             if (typeof __uv$config === 'undefined') {
                 alert('Ultraviolet not loaded. Please check your deployment.');
                 return;
             }
 
-            let cloakSession = null;
             if (!skipAutoCloak && window.self === window.top &&
                 localStorage.getItem('aridiumAutoCloak') === 'true') {
-                cloakSession = createCloakShell();
+                const cloakSession = createCloakShell();
+                if (cloakSession) {
+                    const bridgeUrl = new URL('/scram/bridge.html', location.href);
+                    bridgeUrl.searchParams.set('mode', 'host');
+                    bridgeUrl.searchParams.set('url', url);
+                    cloakSession.frame.src = bridgeUrl.href;
+                    cloakSession.window.document.title = 'New Tab';
+                    cloakSession.window.opener = null;
+                    setTimeout(() => window.location.replace('https://www.nasa.gov/'), 500);
+                    return;
+                }
             }
 
             const searchHints = document.getElementById('searchHints');
             searchHints.textContent = 'Connecting securely…';
 
             try {
-                await prepareProxy();
-
-                const proxiedUrl = new URL(
-                    __uv$config.prefix + __uv$config.encodeUrl(url),
-                    location.href
-                ).href;
-                if (cloakSession) {
-                    cloakSession.frame.src = proxiedUrl;
-                    cloakSession.window.document.title = 'New Tab';
-                    cloakSession.window.opener = null;
-                    setTimeout(() => window.location.replace('https://www.nasa.gov/'), 250);
-                    return;
-                }
-
                 document.getElementById('browserOverlay').classList.add('active');
-                document.getElementById('proxyFrame').src = proxiedUrl;
+                await ensureScramjetBridge();
+                currentProxyBackend = 'scramjet';
+                document.getElementById('proxyFrame').contentWindow.postMessage({
+                    type: SCRAM_LOAD,
+                    url,
+                }, location.origin);
                 document.getElementById('browserUrl').value = url;
                 searchHints.textContent = '💡 Enter a URL or search anything!';
             } catch (error) {
-                if (cloakSession) cloakSession.window.close();
-                console.error('Proxy initialization failed:', error);
-                searchHints.textContent = 'Could not connect to the proxy. Please try again.';
+                console.warn('Scramjet failed; falling back to Ultraviolet:', error);
+                try {
+                    await prepareProxy();
+                    currentProxyBackend = 'uv';
+                    document.getElementById('proxyFrame').src = new URL(
+                        __uv$config.prefix + __uv$config.encodeUrl(url), location.href
+                    ).href;
+                    document.getElementById('browserUrl').value = url;
+                    searchHints.textContent = 'Loaded with compatibility fallback.';
+                } catch (fallbackError) {
+                    console.error('Proxy initialization failed:', fallbackError);
+                    searchHints.textContent = 'Could not connect to the proxy. Please try again.';
+                }
             }
         }
 
         function closeBrowser() {
             document.getElementById('browserOverlay').classList.remove('active');
             document.getElementById('proxyFrame').src = '';
+            scramjetReadyPromise = null;
         }
 
         function browserBack() {
-            try { document.getElementById('proxyFrame').contentWindow.history.back(); } catch(e) {}
+            const frame = document.getElementById('proxyFrame');
+            try {
+                if (currentProxyBackend === 'scramjet') frame.contentWindow.postMessage({ type: SCRAM_BACK }, location.origin);
+                else frame.contentWindow.history.back();
+            } catch(e) {}
         }
 
         function browserForward() {
-            try { document.getElementById('proxyFrame').contentWindow.history.forward(); } catch(e) {}
+            const frame = document.getElementById('proxyFrame');
+            try {
+                if (currentProxyBackend === 'scramjet') frame.contentWindow.postMessage({ type: SCRAM_FORWARD }, location.origin);
+                else frame.contentWindow.history.forward();
+            } catch(e) {}
         }
 
         function browserRefresh() {
-            document.getElementById('proxyFrame').src = document.getElementById('proxyFrame').src;
+            const frame = document.getElementById('proxyFrame');
+            if (currentProxyBackend === 'scramjet') frame.contentWindow.postMessage({ type: SCRAM_RELOAD }, location.origin);
+            else frame.src = frame.src;
         }
 
         function openProxyTab() {
-            const frameUrl = document.getElementById('proxyFrame').src;
-            if (frameUrl) window.open(frameUrl, '_blank', 'noopener');
+            const displayedUrl = document.getElementById('browserUrl').value;
+            if (!displayedUrl) return;
+            if (currentProxyBackend === 'scramjet') {
+                const bridgeUrl = new URL('/scram/bridge.html', location.href);
+                bridgeUrl.searchParams.set('mode', 'host');
+                bridgeUrl.searchParams.set('url', displayedUrl);
+                window.open(bridgeUrl.href, '_blank', 'noopener');
+            } else {
+                window.open(document.getElementById('proxyFrame').src, '_blank', 'noopener');
+            }
         }
 
         async function toggleBrowserFullscreen() {
@@ -839,10 +907,13 @@
         }
 
         function toggleInspector() {
-            const frame = document.getElementById('proxyFrame');
+            const hostFrame = document.getElementById('proxyFrame');
             try {
-                const frameWindow = frame.contentWindow;
-                const frameDocument = frame.contentDocument;
+                const frame = currentProxyBackend === 'scramjet'
+                    ? hostFrame.contentDocument?.getElementById('proxy-frame')
+                    : hostFrame;
+                const frameWindow = frame?.contentWindow;
+                const frameDocument = frame?.contentDocument;
                 if (!frameWindow || !frameDocument) throw new Error('Page is not ready.');
 
                 if (frameWindow.eruda) {
@@ -947,6 +1018,13 @@
         }
 
         const browserUrlInput = document.getElementById('browserUrl');
+        window.addEventListener('message', (event) => {
+            const frame = document.getElementById('proxyFrame');
+            if (event.origin === location.origin && event.source === frame.contentWindow &&
+                event.data?.type === SCRAM_URL && event.data.url) {
+                browserUrlInput.value = event.data.url;
+            }
+        });
         browserUrlInput.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 event.preventDefault();

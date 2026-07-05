@@ -1,6 +1,7 @@
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { hostname } from "node:os";
 import { createServer } from "node:http";
+import { fileURLToPath } from "node:url";
 import express from "express";
 import { server as wisp } from "@mercuryworkshop/wisp-js/server";
 
@@ -8,8 +9,13 @@ import { uvPath } from "@titaniumnetwork-dev/ultraviolet";
 import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 
+const scramjetPath = resolve(
+	dirname(fileURLToPath(import.meta.url)),
+	"../node_modules/@mercuryworkshop/scramjet/dist"
+);
+
 const app = express();
-const proxyAssetPrefixes = ["/uv/", "/libcurl/", "/baremux/"];
+const proxyAssetPrefixes = ["/uv/", "/scram/", "/libcurl/", "/baremux/"];
 
 // Match Truffled's Wisp networking profile for media/CDN connections.
 wisp.options.dns_method = "resolve";
@@ -31,6 +37,7 @@ app.use(express.static("./public"));
 // Load vendor files last.
 // The vendor's uv.config.js won't conflict with our uv.config.js inside the publicPath directory.
 app.use("/uv/", express.static(uvPath));
+app.use("/scram/", express.static(scramjetPath));
 app.use("/libcurl/", express.static(libcurlPath));
 app.use("/baremux/", express.static(baremuxPath));
 app.use("/eruda/", express.static(resolve("node_modules/eruda")));
@@ -44,8 +51,13 @@ app.use((req, res) => {
 const server = createServer();
 
 server.on("request", (req, res) => {
-	res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-	res.setHeader("Cross-Origin-Embedder-Policy", "credentialless");
+	// The Scramjet bridge must stay outside cross-origin isolation so proxied
+	// media/CDN responses render; everything else is isolated (matches Truffled).
+	const isScramBridge = req.url.split("?")[0] === "/scram/bridge.html";
+	if (!isScramBridge) {
+		res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+		res.setHeader("Cross-Origin-Embedder-Policy", "credentialless");
+	}
 	res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
 	app(req, res);
 });
