@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aridium - Web Browser</title>
+    <title>Nebula - Web Browser</title>
     <style>
         :root {
             --bg-primary: #0a0a0a;
@@ -56,7 +56,6 @@
             padding: 20px;
         }
 
-        /* Navigation */
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -107,7 +106,6 @@
             background: rgba(108, 92, 231, 0.2);
         }
 
-        /* Pages */
         .page {
             display: none;
         }
@@ -116,7 +114,6 @@
             display: block;
         }
 
-        /* Home Page */
         .hero-section {
             text-align: center;
             margin-bottom: 40px;
@@ -250,15 +247,14 @@
             color: var(--text-secondary);
         }
 
-        /* Games Page */
-        .games-grid {
+        .games-grid, .apps-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 15px;
             padding: 20px 0;
         }
 
-        .game-card {
+        .game-card, .app-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 16px;
@@ -268,73 +264,30 @@
             transition: all 0.3s ease;
         }
 
-        .game-card:hover {
+        .game-card:hover, .app-card:hover {
             background: var(--bg-secondary);
             border-color: var(--accent);
             transform: translateY(-4px);
             box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
         }
 
-        .game-emoji {
+        .game-emoji, .app-emoji {
             font-size: 48px;
             margin-bottom: 10px;
         }
 
-        .game-title {
+        .game-title, .app-title {
             font-size: 14px;
             font-weight: 600;
             color: var(--text-primary);
         }
 
-        .game-category {
+        .game-category, .app-category {
             font-size: 12px;
             color: var(--text-secondary);
             margin-top: 4px;
         }
 
-        /* Apps Page */
-        .apps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            padding: 20px 0;
-        }
-
-        .app-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .app-card:hover {
-            background: var(--bg-secondary);
-            border-color: var(--accent);
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
-        }
-
-        .app-emoji {
-            font-size: 48px;
-            margin-bottom: 10px;
-        }
-
-        .app-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .app-category {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-
-        /* Settings Page */
         .settings-section {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -347,7 +300,6 @@
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 20px;
-            color: var(--text-primary);
         }
 
         .setting-item {
@@ -364,7 +316,6 @@
 
         .setting-label {
             font-size: 14px;
-            color: var(--text-primary);
         }
 
         .setting-description {
@@ -384,8 +335,40 @@
             outline: none;
         }
 
-        .setting-select:focus {
-            border-color: var(--accent);
+        .save-button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .save-button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .status-message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-message.success {
+            display: block;
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.2);
         }
 
         .toggle-switch {
@@ -432,50 +415,6 @@
             transform: translateX(24px);
         }
 
-        .save-button {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .save-button:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
-        }
-
-        .status-message {
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 14px;
-            text-align: center;
-            display: none;
-        }
-
-        .status-message.success {
-            display: block;
-            background: rgba(34, 197, 94, 0.1);
-            color: #22c55e;
-            border: 1px solid rgba(34, 197, 94, 0.2);
-        }
-
-        .status-message.error {
-            display: block;
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        /* Browser Overlay */
         .browser-overlay {
             display: none;
             position: fixed;
@@ -539,7 +478,6 @@
             outline: none;
             min-width: 0;
             font-family: inherit;
-            cursor: text;
         }
 
         #proxyFrame {
@@ -549,46 +487,22 @@
             background: white;
         }
 
-        /* Mobile Navigation */
-        .mobile-nav-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            font-size: 24px;
-            cursor: pointer;
-            padding: 5px;
-        }
-
-        /* Responsive Design */
         @media (max-width: 768px) {
             .hero-title {
                 font-size: 32px;
             }
             
-            .quick-links {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
-            }
-            
-            .games-grid,
-            .apps-grid {
+            .quick-links, .games-grid, .apps-grid {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 10px;
             }
 
-            .game-card,
-            .app-card {
+            .game-card, .app-card, .link-card {
                 padding: 15px 10px;
             }
 
-            .game-emoji,
-            .app-emoji {
+            .game-emoji, .app-emoji {
                 font-size: 36px;
-            }
-            
-            .link-card {
-                padding: 15px 10px;
             }
             
             .link-emoji {
@@ -614,71 +528,26 @@
             .container {
                 padding: 10px;
             }
-
-            .browser-toolbar {
-                gap: 5px;
-                padding: 8px 10px;
-            }
-            
-            .toolbar-btn {
-                width: 35px;
-                height: 35px;
-            }
         }
 
         @media (max-width: 480px) {
-            .quick-links {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .games-grid,
-            .apps-grid {
+            .quick-links, .games-grid, .apps-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
-            }
-
-            .game-card,
-            .app-card {
-                padding: 12px 8px;
-            }
-
-            .game-emoji,
-            .app-emoji {
-                font-size: 28px;
-            }
-
-            .game-title,
-            .app-title {
-                font-size: 12px;
             }
             
             .hero-title {
                 font-size: 28px;
-            }
-            
-            .hero-subtitle {
-                font-size: 16px;
-            }
-
-            .settings-section {
-                padding: 15px;
-            }
-
-            .setting-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Navigation -->
         <nav class="navbar">
             <div class="logo" onclick="showPage('home')">
                 <span class="logo-emoji">🌌</span>
-                <span>Aridium</span>
+                <span>Nebula</span>
             </div>
             <div class="nav-links">
                 <button class="nav-link active" onclick="showPage('home')" id="homeLink">Home</button>
@@ -688,27 +557,18 @@
             </div>
         </nav>
 
-        <!-- Home Page -->
         <div class="page active" id="homePage">
             <div class="hero-section">
                 <h1 class="hero-title">
                     <span class="gradient-text">Browse Freely</span>
                 </h1>
-                <p class="hero-subtitle">
-                    Fast, secure, and private web browsing
-                </p>
+                <p class="hero-subtitle">Fast, secure, and private web browsing</p>
             </div>
 
             <div class="search-container">
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
-                    <input 
-                        type="text" 
-                        id="urlInput" 
-                        class="url-input" 
-                        placeholder="Search or enter website URL..."
-                        autocomplete="off"
-                    >
+                    <input type="text" id="urlInput" class="url-input" placeholder="Search or enter website URL..." autocomplete="off">
                     <button id="goButton" class="go-button">→</button>
                 </div>
                 <div class="search-hints" id="searchHints">💡 Enter a URL or search anything!</div>
@@ -750,133 +610,56 @@
             </div>
         </div>
 
-        <!-- Games Page -->
         <div class="page" id="gamesPage">
-            <h2 style="text-align: center; margin-bottom: 20px;">
-                <span class="gradient-text">Games</span>
-            </h2>
+            <h2 style="text-align: center; margin-bottom: 20px;"><span class="gradient-text">Games</span></h2>
             <div class="games-grid">
                 <div class="game-card" onclick="openProxy('https://www.coolmathgames.com')">
                     <div class="game-emoji">🧮</div>
                     <div class="game-title">Cool Math Games</div>
-                    <div class="game-category">Educational</div>
                 </div>
                 <div class="game-card" onclick="openProxy('https://www.poki.com')">
                     <div class="game-emoji">🎯</div>
                     <div class="game-title">Poki</div>
-                    <div class="game-category">Arcade</div>
                 </div>
                 <div class="game-card" onclick="openProxy('https://www.crazygames.com')">
                     <div class="game-emoji">🎪</div>
                     <div class="game-title">Crazy Games</div>
-                    <div class="game-category">Variety</div>
                 </div>
                 <div class="game-card" onclick="openProxy('https://krunker.io')">
                     <div class="game-emoji">🔫</div>
                     <div class="game-title">Krunker.io</div>
-                    <div class="game-category">FPS</div>
                 </div>
                 <div class="game-card" onclick="openProxy('https://slither.io')">
                     <div class="game-emoji">🐍</div>
                     <div class="game-title">Slither.io</div>
-                    <div class="game-category">Multiplayer</div>
-                </div>
-                <div class="game-card" onclick="openProxy('https://agar.io')">
-                    <div class="game-emoji">🦠</div>
-                    <div class="game-title">Agar.io</div>
-                    <div class="game-category">Multiplayer</div>
-                </div>
-                <div class="game-card" onclick="openProxy('https://diep.io')">
-                    <div class="game-emoji">🎮</div>
-                    <div class="game-title">Diep.io</div>
-                    <div class="game-category">Shooter</div>
-                </div>
-                <div class="game-card" onclick="openProxy('https://www.addictinggames.com')">
-                    <div class="game-emoji">🕹️</div>
-                    <div class="game-title">Addicting Games</div>
-                    <div class="game-category">Variety</div>
-                </div>
-                <div class="game-card" onclick="openProxy('https://www.miniclip.com')">
-                    <div class="game-emoji">🎳</div>
-                    <div class="game-title">Miniclip</div>
-                    <div class="game-category">Arcade</div>
-                </div>
-                <div class="game-card" onclick="openProxy('https://www.kongregate.com')">
-                    <div class="game-emoji">👾</div>
-                    <div class="game-title">Kongregate</div>
-                    <div class="game-category">Variety</div>
                 </div>
             </div>
         </div>
 
-        <!-- Apps Page -->
         <div class="page" id="appsPage">
-            <h2 style="text-align: center; margin-bottom: 20px;">
-                <span class="gradient-text">Apps</span>
-            </h2>
+            <h2 style="text-align: center; margin-bottom: 20px;"><span class="gradient-text">Apps</span></h2>
             <div class="apps-grid">
                 <div class="app-card" onclick="openProxy('https://docs.google.com')">
                     <div class="app-emoji">📄</div>
                     <div class="app-title">Google Docs</div>
-                    <div class="app-category">Productivity</div>
                 </div>
                 <div class="app-card" onclick="openProxy('https://www.canva.com')">
                     <div class="app-emoji">🎨</div>
                     <div class="app-title">Canva</div>
-                    <div class="app-category">Design</div>
-                </div>
-                <div class="app-card" onclick="openProxy('https://web.whatsapp.com')">
-                    <div class="app-emoji">💭</div>
-                    <div class="app-title">WhatsApp</div>
-                    <div class="app-category">Messaging</div>
                 </div>
                 <div class="app-card" onclick="openProxy('https://web.telegram.org')">
                     <div class="app-emoji">✈️</div>
                     <div class="app-title">Telegram</div>
-                    <div class="app-category">Messaging</div>
                 </div>
                 <div class="app-card" onclick="openProxy('https://www.photopea.com')">
                     <div class="app-emoji">🖼️</div>
                     <div class="app-title">Photopea</div>
-                    <div class="app-category">Photo Editor</div>
-                </div>
-                <div class="app-card" onclick="openProxy('https://www.figma.com')">
-                    <div class="app-emoji">✏️</div>
-                    <div class="app-title">Figma</div>
-                    <div class="app-category">Design</div>
-                </div>
-                <div class="app-card" onclick="openProxy('https://www.notion.so')">
-                    <div class="app-emoji">📝</div>
-                    <div class="app-title">Notion</div>
-                    <div class="app-category">Notes</div>
-                </div>
-                <div class="app-card" onclick="openProxy('https://vscode.dev')">
-                    <div class="app-emoji">💻</div>
-                    <div class="app-title">VS Code</div>
-                    <div class="app-category">Coding</div>
                 </div>
             </div>
         </div>
 
-        <!-- Settings Page -->
         <div class="page" id="settingsPage">
-            <h2 style="text-align: center; margin-bottom: 20px;">
-                <span class="gradient-text">Settings</span>
-            </h2>
-
-            <div class="settings-section">
-                <h3 class="settings-title">🔌 Proxy Configuration</h3>
-                <div class="setting-item">
-                    <div>
-                        <div class="setting-label">Proxy Service URL</div>
-                        <div class="setting-description">Enter your Ultraviolet/Bare server URL</div>
-                    </div>
-                    <input type="text" id="proxyUrlInput" class="setting-select" placeholder="https://your-proxy.server.com" style="width: 250px; max-width: 100%;">
-                </div>
-                <button class="save-button" onclick="saveProxyUrl()">Save Proxy URL</button>
-                <div id="proxyStatus" class="status-message"></div>
-            </div>
-
+            <h2 style="text-align: center; margin-bottom: 20px;"><span class="gradient-text">Settings</span></h2>
             <div class="settings-section">
                 <h3 class="settings-title">🔍 Search Engine</h3>
                 <div class="setting-item">
@@ -888,52 +671,26 @@
                         <option value="google">Google</option>
                         <option value="duckduckgo">DuckDuckGo</option>
                         <option value="bing">Bing</option>
-                        <option value="brave">Brave</option>
                     </select>
                 </div>
                 <button class="save-button" onclick="saveSearchEngine()">Save Search Engine</button>
-                <div id="searchStatus" class="status-message"></div>
             </div>
-
             <div class="settings-section">
                 <h3 class="settings-title">🎨 Appearance</h3>
                 <div class="setting-item">
                     <div>
                         <div class="setting-label">Cloaking</div>
-                        <div class="setting-description">Change tab title and icon to look like another site</div>
+                        <div class="setting-description">Disguise as Google Classroom</div>
                     </div>
                     <label class="toggle-switch">
                         <input type="checkbox" id="cloakingToggle" onchange="toggleCloaking()">
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
-                <div class="setting-item">
-                    <div>
-                        <div class="setting-label">Panic Key</div>
-                        <div class="setting-description">Press this key to quickly hide the site</div>
-                    </div>
-                    <select id="panicKeySelect" class="setting-select">
-                        <option value="Escape">Escape</option>
-                        <option value="Backquote">` (Backtick)</option>
-                        <option value="F1">F1</option>
-                    </select>
-                </div>
                 <button class="save-button" onclick="saveAppearance()">Save Settings</button>
-                <div id="appearanceStatus" class="status-message"></div>
-            </div>
-
-            <div class="settings-section">
-                <h3 class="settings-title">ℹ️ About</h3>
-                <div class="setting-item">
-                    <div>
-                        <div class="setting-label">Aridium Proxy v1.0</div>
-                        <div class="setting-description">A modern web proxy for browsing freely</div>
-                    </div>
-                </div>
             </div>
         </div>
 
-        <!-- Browser Overlay -->
         <div class="browser-overlay" id="browserOverlay">
             <div class="browser-toolbar">
                 <button class="toolbar-btn" onclick="browserBack()">←</button>
@@ -946,60 +703,25 @@
         </div>
     </div>
 
+    <script src="/uv/uv.bundle.js"></script>
+    <script src="/uv/uv.config.js"></script>
     <script>
         // Page Navigation
         function showPage(pageName) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Show selected page
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(pageName + 'Page').classList.add('active');
-            
-            // Update nav links
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
             document.getElementById(pageName + 'Link').classList.add('active');
         }
 
-        // Proxy/Browser Functions
-        function getProxyUrl() {
-            return localStorage.getItem('nebulaProxyUrl') || '';
-        }
-
+        // Ultraviolet Proxy
         function openProxy(url) {
-            const proxyUrl = getProxyUrl();
-            
-            if (!proxyUrl) {
-                // If no proxy configured, ask user
-                const customProxy = prompt('No proxy configured. Enter your proxy service URL:', '');
-                if (customProxy) {
-                    localStorage.setItem('nebulaProxyUrl', customProxy);
-                    openProxyWithService(url, customProxy);
-                }
-            } else {
-                openProxyWithService(url, proxyUrl);
-            }
-        }
-
-        function openProxyWithService(url, serviceUrl) {
-            // Show browser overlay
             document.getElementById('browserOverlay').classList.add('active');
             
-            // Construct the proxy URL (for Ultraviolet)
-            const encodedUrl = encodeURIComponent(url);
-            let finalUrl;
+            // Use Ultraviolet's encode function
+            const encodedUrl = __uv$config.prefix + __uv$config.encodeUrl(url);
             
-            if (serviceUrl.includes('ultraviolet') || serviceUrl.includes('/service/')) {
-                finalUrl = serviceUrl + encodedUrl;
-            } else {
-                finalUrl = serviceUrl + '?url=' + encodedUrl;
-            }
-            
-            // Set iframe source
-            document.getElementById('proxyFrame').src = finalUrl;
+            document.getElementById('proxyFrame').src = encodedUrl;
             document.getElementById('browserUrl').value = url;
         }
 
@@ -1009,22 +731,15 @@
         }
 
         function browserBack() {
-            const iframe = document.getElementById('proxyFrame');
-            if (iframe.contentWindow) {
-                iframe.contentWindow.history.back();
-            }
+            document.getElementById('proxyFrame').contentWindow.history.back();
         }
 
         function browserForward() {
-            const iframe = document.getElementById('proxyFrame');
-            if (iframe.contentWindow) {
-                iframe.contentWindow.history.forward();
-            }
+            document.getElementById('proxyFrame').contentWindow.history.forward();
         }
 
         function browserRefresh() {
-            const iframe = document.getElementById('proxyFrame');
-            iframe.src = iframe.src;
+            document.getElementById('proxyFrame').src = document.getElementById('proxyFrame').src;
         }
 
         // Search/URL Navigation
@@ -1038,145 +753,65 @@
             if (!query) return;
             
             let url;
-            
             if (query.startsWith('http://') || query.startsWith('https://')) {
                 url = query;
             } else if (query.includes('.') && !query.includes(' ')) {
                 url = 'https://' + query;
             } else {
-                // Use configured search engine
-                const searchEngine = localStorage.getItem('nebulaSearchEngine') || 'google';
+                const engine = localStorage.getItem('searchEngine') || 'google';
                 const searchUrls = {
                     google: 'https://www.google.com/search?q=',
                     duckduckgo: 'https://duckduckgo.com/?q=',
-                    bing: 'https://www.bing.com/search?q=',
-                    brave: 'https://search.brave.com/search?q='
+                    bing: 'https://www.bing.com/search?q='
                 };
-                url = searchUrls[searchEngine] + encodeURIComponent(query);
+                url = searchUrls[engine] + encodeURIComponent(query);
             }
             
             openProxy(url);
         }
 
-        // Settings Functions
-        function saveProxyUrl() {
-            const url = document.getElementById('proxyUrlInput').value.trim();
-            const status = document.getElementById('proxyStatus');
-            
-            if (url) {
-                localStorage.setItem('nebulaProxyUrl', url);
-                status.textContent = '✅ Proxy URL saved successfully!';
-                status.className = 'status-message success';
-                setTimeout(() => status.className = 'status-message', 3000);
-            } else {
-                status.textContent = '❌ Please enter a valid URL';
-                status.className = 'status-message error';
-                setTimeout(() => status.className = 'status-message', 3000);
-            }
-        }
-
         function saveSearchEngine() {
-            const engine = document.getElementById('searchEngineSelect').value;
-            const status = document.getElementById('searchStatus');
-            
-            localStorage.setItem('nebulaSearchEngine', engine);
-            status.textContent = '✅ Search engine updated!';
-            status.className = 'status-message success';
-            setTimeout(() => status.className = 'status-message', 3000);
+            localStorage.setItem('searchEngine', document.getElementById('searchEngineSelect').value);
         }
 
         function toggleCloaking() {
             const toggle = document.getElementById('cloakingToggle');
             if (toggle.checked) {
-                // Cloak as Google Classroom
                 document.title = 'Home';
-                changeFavicon('📚');
-                localStorage.setItem('nebulaCloaking', 'true');
+                localStorage.setItem('cloaking', 'true');
             } else {
-                document.title = 'Aridium - Web Browser';
-                changeFavicon('🌌');
-                localStorage.setItem('nebulaCloaking', 'false');
+                document.title = 'Nebula - Web Browser';
+                localStorage.setItem('cloaking', 'false');
             }
         }
 
-        function changeFavicon(emoji) {
-            const canvas = document.createElement('canvas');
-            canvas.height = 32;
-            canvas.width = 32;
-            const ctx = canvas.getContext('2d');
-            ctx.font = '28px serif';
-            ctx.fillText(emoji, 2, 24);
-            
-            const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-            link.type = 'image/x-icon';
-            link.rel = 'shortcut icon';
-            link.href = canvas.toDataURL();
-            document.head.appendChild(link);
-        }
+        function saveAppearance() {}
 
-        function saveAppearance() {
-            const status = document.getElementById('appearanceStatus');
-            localStorage.setItem('nebulaPanicKey', document.getElementById('panicKeySelect').value);
-            status.textContent = '✅ Appearance settings saved!';
-            status.className = 'status-message success';
-            setTimeout(() => status.className = 'status-message', 3000);
-        }
-
-        // Panic Button
+        // Panic key
         document.addEventListener('keydown', function(e) {
-            const panicKey = localStorage.getItem('nebulaPanicKey') || 'Escape';
-            if (e.key === panicKey) {
-                // Redirect to Google
+            if (e.key === 'Escape') {
                 window.location.replace('https://www.google.com');
             }
         });
 
-        // Load saved settings
-        function loadSettings() {
-            // Load proxy URL
-            const savedProxyUrl = localStorage.getItem('nebulaProxyUrl');
-            if (savedProxyUrl) {
-                document.getElementById('proxyUrlInput').value = savedProxyUrl;
-            }
-            
-            // Load search engine
-            const savedEngine = localStorage.getItem('nebulaSearchEngine');
-            if (savedEngine) {
-                document.getElementById('searchEngineSelect').value = savedEngine;
-            }
-            
-            // Load cloaking
-            const cloaking = localStorage.getItem('nebulaCloaking');
-            if (cloaking === 'true') {
-                document.getElementById('cloakingToggle').checked = true;
-                document.title = 'Home';
-                changeFavicon('📚');
-            }
-            
-            // Load panic key
-            const savedPanicKey = localStorage.getItem('nebulaPanicKey');
-            if (savedPanicKey) {
-                document.getElementById('panicKeySelect').value = savedPanicKey;
-            }
+        // Load settings
+        const savedEngine = localStorage.getItem('searchEngine');
+        if (savedEngine) document.getElementById('searchEngineSelect').value = savedEngine;
+        
+        if (localStorage.getItem('cloaking') === 'true') {
+            document.getElementById('cloakingToggle').checked = true;
+            document.title = 'Home';
         }
 
-        // Hints rotation
-        const hints = [
-            '💡 Pro tip: Enter a URL or search anything!',
-            '🔒 Your browsing is private and encrypted',
-            '⚡ Tip: Bookmark this page for quick access',
-            '🎮 Check out the Games tab for fun!',
-            '📱 Works great on mobile devices',
-            '🔧 Configure your proxy in Settings'
-        ];
-        
+        // Hints
+        const hints = ['💡 Enter a URL or search anything!', '🔒 Private and encrypted browsing', '🎮 Check out the Games tab!'];
         let hintIndex = 0;
         setInterval(() => {
             document.getElementById('searchHints').textContent = hints[hintIndex];
             hintIndex = (hintIndex + 1) % hints.length;
         }, 3000);
 
-        // Keyboard shortcut
+        // Ctrl+L shortcut
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.key === 'l') {
                 e.preventDefault();
@@ -1184,8 +819,6 @@
             }
         });
 
-        // Initialize
-        loadSettings();
         document.getElementById('urlInput').focus();
     </script>
 </body>
