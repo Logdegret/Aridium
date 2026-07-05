@@ -33,7 +33,18 @@ app.use((req, res, next) => {
 });
 
 // Load our publicPath first and prioritize it over UV.
-app.use(express.static("./public"));
+// HTML documents are served no-store so the cross-origin-isolation headers
+// (COOP/COEP) can never be reused from a stale cache — a stale isolated
+// index.html would block the Scramjet bridge and force the slower UV fallback.
+app.use(
+	express.static("./public", {
+		setHeaders: (res, filePath) => {
+			if (filePath.endsWith(".html")) {
+				res.setHeader("Cache-Control", "no-store");
+			}
+		},
+	})
+);
 // Load vendor files last.
 // The vendor's uv.config.js won't conflict with our uv.config.js inside the publicPath directory.
 app.use("/uv/", express.static(uvPath));
